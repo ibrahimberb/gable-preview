@@ -1,73 +1,78 @@
-# GABLE - Google Apps Script Longitudinal Participant Management
+# GABLE: Google Apps Script Longitudinal Participant Management
 
-GABLE automates participant management for longitudinal online psychological experiments using Google Apps Script. It handles scheduling, reminders, session tracking, and gift card distribution, allowing researchers to focus on their experimental tasks.
+GABLE is a Google Apps Script framework for managing participants in longitudinal online experiments. It automates scheduling, reminders, session tracking, and incentive workflows so researchers can focus on building their experimental task.
 
-**Note:** GABLE manages participants only—you must develop your own task webpage separately.
+> GABLE manages participants and study flow. You are responsible for building and hosting the task webpage.
 
-## What GABLE Does
+## Features
 
-- Tracks participant sessions and trials across multiple timepoints
-- Sends automated email reminders and notifications
-- Monitors completion status and validates sessions
-- Manages gift card distribution
-- Provides real-time tracking via Google Sheets
-- Integrates with Azure Blob Storage for participant data
+- Tracks multisession progress per participant
+- Sends automated reminder and status emails
+- Activates sessions based on configurable schedules
+- Logs all activity in a Google Sheet
+- Reads participant progress from your chosen storage backend
+- Supports automated gift card tracking and payouts
 
 ## Quick Start
 
-### 1. Initial Setup
+### 1. Google Apps Script Setup
 
 1. Create a new Google Sheet
-2. Go to **Extensions → Apps Script**
-3. Copy all `.js` files from this repository into your Apps Script project
-4. Configure `config.js` with your study settings (see below)
-5. Run the `initialize()` function from `main.js`
-6. Check your email for configuration confirmation
+2. Go to Extensions → Apps Script
+3. Copy all `.js` files into the project
+4. Update `config.js`
+5. Run `initialize()`
+6. Confirm setup via email
 
-### 2. Essential Configuration (`config.js`)
+### Essential Configuration (config.js)
 
-Update these required fields in the `STUDIES` object:
+At the top of `config.js`, set:
+
+- `NUM_SESSIONS`
+- `NUM_GROUPS`
+- `DAYS_INTERVAL`
+- `GROUPS_MAPPING`
+
+Your study definition stays exactly as before:
 
 ```javascript
 STUDIES = {
   GABLE_01: {
     name: "Your Study Name",
     admin_name: "Your Name",
-    website: "https://your-task-page.com",  // Your task webpage URL
+    website: "https://your-task-page.com",
     preexperiment: "https://your-qualtrics-link.com",
-    email: 'your-email@example.com',
+    email: "your-email@example.com",
     folderID: "your-google-drive-folder-id",
     adminCalendarId: "your-calendar-id@google.com",
-    
-    // Azure Storage (where participant data lives)
+
     sasToken: "?sv=xxxx",
     storageAccountName: "your-storage-account",
     storageContainer: "your-container-name",
-    
-    // Study parameters
+
     groups: {
-      number: NUM_GROUPS,  // Adjust NUM_GROUPS at top of file
-      numSessions: NUM_SESSIONS,  // Adjust NUM_SESSIONS at top of file
+      number: NUM_GROUPS,
+      numSessions: NUM_SESSIONS,
       giftCardAmountPerSession: 5,
       giftCardAmountAfterCompletion: 100
     }
   }
-}
+};
 ```
 
-Adjust these constants at the top of `config.js`:
-- `NUM_SESSIONS`: Total number of sessions in your study
-- `NUM_GROUPS`: Number of experimental groups
-- `DAYS_INTERVAL`: Days between each session
-- `GROUPS_MAPPING`: Define your group names/conditions
+The three storage fields above were originally described as Azure related. You can keep them as is or adapt them for any backend as long as your storage helper functions know how to use them. GABLE only requires the ability to read and write JSON.
 
 ## Integration with Your Task Webpage
 
-### Critical: Participant Data Structure
+Your task saves a JSON state file for each participant. It can be stored in Azure, AWS, GCP, Firebase, or any storage reachable through HTTP fetch. The filename format is customizable; in the current implementation it follows:
 
-Your task webpage **must** write participant data to Azure Blob Storage as JSON files with this structure:
+```
+pID{userId}_gable.json
+```
 
-```javascript
+### Required JSON Structure
+
+```json
 {
   "userId": "fa4ae08",
   "group": "G11",
@@ -89,109 +94,66 @@ Your task webpage **must** write participant data to Azure Blob Storage as JSON 
 }
 ```
 
-### Required Fields Your Task Page Must Update
+### Fields Your Task Must Maintain
 
-GABLE reads and processes these fields via scheduled triggers:
+| Field | Description | Updated by |
+|-------|-------------|------------|
+| `sessionNumber` | Current session | Task |
+| `trialNumber` | Current trial | Task |
+| `sessionCompleted` | Session finished | Task |
+| `trialCompleted` | Trial finished | Task |
+| `firstTrialStartTime` | First trial time | Task |
+| `lastTrialCompletedTime` | Last trial time | Task |
+| `lastSessionCompletedTime` | Session completion time | Task |
+| `latestSubmissionTime` | Every save | Task |
+| `sessionActivationTime` | When session opened | GABLE |
+| `accountTerminated` | Removed or dropped | Admin |
 
-| Field | Description | When to Update |
-|-------|-------------|----------------|
-| `sessionNumber` | Current session (1-indexed) | When participant starts a new session |
-| `trialNumber` | Current trial within session | After each trial completion |
-| `sessionCompleted` | Session is finished | When all trials in session are done |
-| `trialCompleted` | Current trial is finished | After each trial |
-| `firstTrialStartTime` | First trial start timestamp | When user starts first trial |
-| `lastTrialCompletedTime` | Most recent trial completion | After each trial |
-| `lastSessionCompletedTime` | Session completion timestamp | When session finishes |
-| `sessionActivationTime` | When session became available | Set by GABLE initially, don't overwrite |
-| `latestSubmissionTime` | Most recent data submission | On every data save |
-| `accountTerminated` | User dropped out or was removed | If user needs to be excluded |
+### Initial File Created by GABLE
 
-### Initial JSON File Creation
+```json
+{
+  "sessionNumber": 0,
+  "trialNumber": 0,
+  "sessionCompleted": true,
+  "trialCompleted": true
+}
+```
 
-When a participant signs up, GABLE creates their initial JSON file with:
-- `sessionNumber: 0`
-- `trialNumber: 0`
-- `sessionCompleted: true`
-- `trialCompleted: true`
+## Workflow
 
-Your task page should increment these values as the participant progresses.
+1. **Sign up**: GABLE writes the participant to the Sheet and creates the initial JSON file
+2. **Session activation**: GABLE opens the next session based on your timing rules
+3. **Task participation**: Your webpage updates the JSON as the participant progresses
+4. **Monitoring and email**: Scheduled checks read the JSON file and update Sheets and emails
+5. **Completion and incentives**: Gift card logic tracks progress and completion payments
 
-### File Naming Convention
+## Time Based Triggers
 
-Store participant data as: `{userId}.json` in your Azure container.
+Initialization creates triggers that:
 
-## How GABLE Works
+- Activate sessions
+- Send reminders
+- Poll the storage JSON files
+- Update Sheets
+- Create optional summaries
 
-1. **Participant Sign-Up**: User fills Google Form → GABLE creates their data file in Azure
-2. **Session Activation**: Time-based triggers activate next session → updates `sessionActivationTime`
-3. **Monitoring**: GABLE checks Azure files every few hours for completion status
-4. **Emails**: Sends reminders, completion confirmations, and gift card codes automatically
-5. **Tracking**: All activities logged in Google Sheets with color-coded status
-
-## Time-Based Triggers
-
-GABLE uses Google Apps Script triggers to:
-- Check for session completions (reads your Azure files)
-- Send reminder emails for incomplete sessions
-- Activate new sessions after the specified interval
-- Generate daily summary reports
-
-Triggers are created automatically during initialization.
-
-## Important Notes
-
-### Your Task Webpage Responsibilities
-
-✅ **Your task page must:**
-- Read the participant's JSON file from Azure at session start
-- Update `sessionNumber`, `trialNumber`, and timestamps during the task
-- Set `sessionCompleted: true` and `trialCompleted: true` when appropriate
-- Write updates back to Azure after every significant event
-
-❌ **Your task page should NOT:**
-- Modify `userId`, `group`, or `sessionActivationTime`
-- Skip updating completion flags—GABLE relies on these
-- Use different date formats (use: "MM/DD/YYYY HH:MM:SS AM/PM")
-
-### Date Format
-
-Always use: `"12/10/2025 10:35:00 AM"` format for all timestamp fields.
+## Testing and Customization
 
 ### Testing
 
-Test with a few participants first. Check the Google Sheet to ensure:
-- Colors update correctly (green → blue after completion)
-- Email notifications are sent
-- Session numbers increment properly
+Use a few test participants and confirm session changes, email behavior, and JSON updates.
 
-## Customization
+### Customization
 
-Most customization happens in `config.js`:
-- Session timing and intervals
-- Email templates (in various functions)
-- Gift card amounts
-- Grace periods for late completions
-- Valid time windows for task completion
+Edit in `config.js` and email templates:
 
-## Troubleshooting
+- Session spacing
+- Group definitions
+- Payout amounts
+- Allowed windows for completion
+- Storage helper functions
 
-**Participants not advancing sessions:**
-- Check Azure file permissions (SAS token)
-- Verify `sessionCompleted` is being set to `true`
-- Ensure date format matches exactly
+## License
 
-**Emails not sending:**
-- Check Gmail quotas (Apps Script has daily limits)
-- Verify email addresses in `config.js`
-
-**Data not syncing:**
-- Confirm Azure credentials in `config.js`
-- Check Apps Script trigger logs: **Apps Script Editor → Executions**
-
-## Support
-
-For issues or questions about GABLE, please open an issue on GitHub or contact the maintainers listed in `config.js`.
-
----
-
-**License:** [Add your license here]
+Add your license text here.
