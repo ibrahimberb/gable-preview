@@ -24,43 +24,182 @@ GABLE is a Google Apps Script framework for managing participants in longitudina
 5. Run `initialize()`
 6. Confirm setup via email
 
-### Essential Configuration (config.js)
+### Detailed Configuration Guide
 
-At the top of `config.js`, set:
+#### Global Study Parameters
 
-- `NUM_SESSIONS`
-- `NUM_GROUPS`
-- `DAYS_INTERVAL`
-- `GROUPS_MAPPING`
+```js
+const NUM_SESSIONS = 10;
+const NUM_GROUPS = 7;
+const DAYS_INTERVAL = 2;
+const DAYS_INTERVAL_TEXT = "1-3 days";
 
-Your study definition stays exactly as before:
+```
 
-```javascript
-STUDIES = {
-  GABLE_01: {
-    name: "Your Study Name",
-    admin_name: "Your Name",
-    website: "https://your-task-page.com",
-    preexperiment: "https://your-qualtrics-link.com",
-    email: "your-email@example.com",
-    folderID: "your-google-drive-folder-id",
-    adminCalendarId: "your-calendar-id@google.com",
+- `NUM_SESSIONS`: Total number of sessions in the longitudinal study. Used throughout the script for scheduling and study logic.
 
-    sasToken: "?sv=xxxx",
-    storageAccountName: "your-storage-account",
-    storageContainer: "your-container-name",
+- `NUM_GROUPS`: Number of experimental groups. Must match the number of entries in GROUPS_MAPPING, groupIndexMapping, and indexGroupMapping.
 
-    groups: {
-      number: NUM_GROUPS,
-      numSessions: NUM_SESSIONS,
-      giftCardAmountPerSession: 5,
-      giftCardAmountAfterCompletion: 100
-    }
-  }
+- `DAYS_INTERVAL`: Default number of days between sessions. Each session’s daysBeforeNext is initialized with this value.
+
+- `DAYS_INTERVAL_TEXT`: Human readable description of the intended return window, used in communication to participants.
+
+
+#### Group Definitions
+
+```js
+const GROUPS_MAPPING = {
+  "G00": "Baseline - Baseline",
+  "G01": "Baseline - Variant 1",
+  "G02": "Baseline - Variant 2",
+  "G11": "Variant 1 - Variant 1",
+  "G12": "Variant 1 - Variant 2",
+  "G21": "Variant 2 - Variant 1",
+  "G22": "Variant 2 - Variant 2"
 };
 ```
 
-The three storage fields above were originally described as Azure related. You can keep them as is or adapt them for any backend as long as your storage helper functions know how to use them. GABLE only requires the ability to read and write JSON.
+- `GROUPS_MAPPING`: Maps group IDs (e.g., `G00`) to human readable condition labels. Edit labels here if you change experimental conditions.
+
+Index mappings must stay consistent:
+
+```js
+const groupIndexMapping = { /* index → groupId */ }
+const indexGroupMapping = { /* groupId → index */ }
+```
+
+The assertions at the bottom ensure that `NUM_GROUPS` matches all three mappings. If you add or remove a group, update these mappings and `NUM_GROUPS` together.
+
+#### `STUDIES` Object
+
+Currently the script assumes exactly one active study:
+
+```js
+var STUDIES = {
+  GABLE_01: { ... }
+};
+
+assert(Object.keys(STUDIES).length === 1, "...only one study...");
+```
+
+Do not add additional entries unless you are ready to refactor the code.
+
+Inside `GABLE_01` you must customize:
+
+```javascript
+name: "GABLE Experiment",
+admin_name: "Admin Name",
+website: "https://google.com",
+preexperiment: "------TODO-----------",
+email: "email@example.com",
+folderID: "------TODO-----------",
+updateeEmails: ["email1@case.edu", "email2@case.edu"],
+adminCalendarId: "------TODO-----------",
+```
+
+- `name`: Study name for internal reference.
+
+- `admin_name`: Primary administrator name, used in emails.
+
+- `website`
+URL of your experimental task.
+
+- `preexperiment`: URL of a pre experiment survey (for example Qualtrics).
+
+- `email`: Contact email for participants. You may provide multiple addresses separated by commas.
+
+- `folderID`: Google Drive folder ID where logs and exports are stored.
+
+- `updateeEmails`: List of addresses that receive daily status updates.
+
+- `adminCalendarId`: Google Calendar ID where participant sessions are scheduled.
+Google Calendar ID where participant sessions are scheduled.
+
+##### Group and Incentive Settings
+
+```javascript
+groups: {
+  number: NUM_GROUPS,
+  numSessions: NUM_SESSIONS,
+  giftCardAmountPerSession: 5,
+  giftCardAmountAfterCompletion: 100
+},
+halfSessionNumber: Math.floor(NUM_SESSIONS/2),
+```
+
+- `giftCardAmountPerSession`: Payment per completed session.
+
+- `giftCardAmountAfterCompletion`: Completion bonus after finishing all sessions.
+
+- `halfSessionNumber`: Automatically computed midpoint session, used for logic that depends on “first half” vs “second half”.
+
+##### Late Session Grace Period
+
+```javascript
+lateSessionGraceDays: {
+  shouldGiveGrace: true,
+  afterSession: 5,
+  graceDaysNumber: 3
+},
+```
+
+- `shouldGiveGrace`: Enable or disable a grace period.
+
+- `afterSession`: Starting after this session number, the grace logic applies.
+
+- `graceDaysNumber`: Number of extra days given if a participant misses the scheduled time.
+
+
+##### Study Data Structure
+```js
+studyData: Array.from({ length: NUM_SESSIONS }, (_, i) => ({
+  sessionName: (i + 1).toString(),
+  daysBeforeNext: DAYS_INTERVAL
+})),
+
+```
+
+- Creating necessary data with the default gap of `DAYS_INTERVAL`
+
+
+##### Invalidation Rules
+
+
+```js
+numberOfDaysToInvalidateIncompleteSession: 1,
+numberOfHoursToInvalidateIncompleteSession: 2,
+```
+
+Controls how quickly an incomplete session becomes invalid. These are used to define timeouts after a participant starts but does not finish a session.
+
+##### Sign-up Valid Time Ranges
+
+```js
+experimentValidTimeRange: [8, 22]
+```
+
+If a user selects a time outside the valid range, it is automatically adjusted to the nearest allowable time. All times are interpreted in 24-hour format.
+
+
+##### Status Storage
+
+```js
+collecting: true,
+sasToken: "?sv=xxxx",
+storageAccountName: "xxxx",
+storageContainer: "xxxx",
+```
+
+The storage fields above were originally described as Azure related. You can keep them as is or adapt them for any cloud service provider as long as your storage helper functions know how to use them. 
+
+If you decide to use a different cloud provider, remember to adapt your own storage helper functions similar to those that are in `Azure.gs`. 
+
+GABLE only requires the ability to read and write JSON.
+
+- `collecting`: Set to true to enable data collection from your storage backend.
+
+- `sasToken`, `storageAccountName`, `storageContainer`: Azure storage related fields that establish connection for your storage backend. Fill these in with your own credentials (or adapt to your own storage solution).
+
 
 ## Integration with Your Task Webpage
 
@@ -83,14 +222,7 @@ pID{userId}_gable.json
   "trialCompleted": true,
   "accountTerminated": false,
   "lastTrialCompletedTime": "12/10/2025 11:35:00 AM",
-  "lastSessionCompletedTime": "12/10/2025 11:35:00 AM",
   "sessionActivationTime": "12/10/2025 10:30:00 AM",
-  "latestSubmissionTime": "",
-  "loginData": [],
-  "trialStartTimesData": {},
-  "trialCompletedTimesData": {},
-  "sessionStartTimes": {},
-  "sessionCompletedTimes": {}
 }
 ```
 
@@ -102,11 +234,9 @@ pID{userId}_gable.json
 | `trialNumber` | Current trial | Task |
 | `sessionCompleted` | Session finished | Task |
 | `trialCompleted` | Trial finished | Task |
-| `firstTrialStartTime` | First trial time | Task |
-| `lastTrialCompletedTime` | Last trial time | Task |
-| `lastSessionCompletedTime` | Session completion time | Task |
-| `latestSubmissionTime` | Every save | Task |
-| `sessionActivationTime` | When session opened | GABLE |
+| `firstTrialStartTime` | First trial time of current session | Task |
+| `lastTrialCompletedTime` | Last completed trial time of the user | Task |
+| `sessionActivationTime` | When session activated | GABLE |
 | `accountTerminated` | Removed or dropped | Admin |
 
 ### Initial File Created by GABLE
