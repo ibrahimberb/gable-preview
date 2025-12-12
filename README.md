@@ -132,15 +132,15 @@ pID{userId}_gable.json
 
 GABLE uses color codes to track participant session states. Each color represents a specific stage in the session lifecycle:
 
-- <span style="background:#ADD8E6; color:#000; padding:2px 6px; border-radius:3px;"><b>LIGHT BLUE</b></span>: It means the user finished the session, the data is saved to azure database but the session completion emails are not sent.
-- <span style="background:#034AEA; color:#fff; padding:2px 6px; border-radius:3px;"><b>DARK BLUE</b></span>: It means that the user finished the session, the data is saved to azure database and the session completion emails are sent to the participants.
-- <span style="background:#FFFF00; color:#000; padding:2px 6px; border-radius:3px;"><b>YELLOW</b></span>: It means that the user did not start the session but 1 days remained for the session due. The remainder emails are sent to the users.
-- <span style="background:#FFF; color:#000; padding:2px 6px; border-radius:3px; border:1px solid #999;"><b>WHITE</b></span>: It means that the next session date is calculated for the participant. However, the email that informs the participants about the next session is not sent yet.
-- <span style="background:#E69138; color:#000; padding:2px 6px; border-radius:3px;"><b>ORANGE</b></span>: It means that the user started this session but left it incomplete for 24 hours. We are sending incomplete session email for this situation.
-- <span style="background:#FF0000; color:#fff; padding:2px 6px; border-radius:3px;"><b>RED</b></span>: It means that the participant is invalided since the session is not completed on time. Gift cards are also sent with the email that inform the participation about their invalidation.
-- <span style="background:#90EE90; color:#000; padding:2px 6px; border-radius:3px;"><b>GREEN</b></span>: It means that the next session email is sent to the participant including the calendar invite and the begin-end dates for that particular session.
-- <span style="background:#BFBFBF; color:#000; padding:2px 6px; border-radius:3px;"><b>GREY</b></span>: It means that the grace period is given to the participants (3 days in the current implementation) for sessions after 14. Sending emails regarding the status of the participant too.
-- <span style="background:#FF00FF; color:#fff; padding:2px 6px; border-radius:3px;"><b>PURPLE</b></span>: It means that we already gave the grace period to the participant but 1 day remains for that grace period to end too. Sending emails regarding the status of the participant too.
+- $${\color{lightblue}LIGHT \space BLUE}$$: It means the user finished the session, the data is saved to azure database but the session completion emails are not sent.
+- $${\color{blue}DARK \space BLUE}$$: It means that the user finished the session, the data is saved to azure database and the session completion emails are sent to the participants.
+- $${\color{yellow}YELLOW}$$: It means that the user did not start the session but 1 days remained for the session due. The remainder emails are sent to the users.
+- $${\color{white}WHITE}$$: It means that the next session date is calculated for the participant. However, the email that informs the participants about the next session is not sent yet.
+- $${\color{orange}ORANGE}$$: It means that the user started this session but left it incomplete for 24 hours. We are sending incomplete session email for this situation.
+- $${\color{red}RED}$$: It means that the participant is invalided since the session is not completed on time. Gift cards are also sent with the email that inform the participation about their invalidation.
+- $${\color{lightgreen}LIGHT \space GREEN}$$: It means that the next session email is sent to the participant including the calendar invite and the begin-end dates for that particular session.
+- $${\color{grey}GREY}$$: It means that the grace period is given to the participants (3 days in the current implementation) for sessions after 14. Sending emails regarding the status of the participant too.
+- $${\color{purple}PURPLE}$$: It means that we already gave the grace period to the participant but 1 day remains for that grace period to end too. Sending emails regarding the status of the participant too.
 
 ### Common Session Flow Scenarios
 
