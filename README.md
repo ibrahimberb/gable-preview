@@ -128,6 +128,148 @@ pID{userId}_gable.json
 4. **Monitoring and email**: Scheduled checks read the JSON file and update Sheets and emails
 5. **Completion and incentives**: Gift card logic tracks progress and completion payments
 
+## Session Status Colors
+
+GABLE uses color codes to track participant session states. Each color represents a specific stage in the session lifecycle:
+
+- $\colorbox{ADD8E6}{LIGHT BLUE}$: It means the user finished the session, the data is saved to azure database but the session completion emails are not sent.
+- $\colorbox{034AEA}{DARK BLUE}$**:** It means that the user finished the session, the data is saved to azure database and the session completion emails are sent to the participants.
+- $\colorbox{FFFF00}{YELLOW}$**:** It means that the user did not start the session but 1 days remained for the session due. The remainder emails are sent to the users.
+- $\colorbox{FFFFFF}{WHITE}$**:** It means that the next session date is calculated for the participant. However, the email that informs the participants about the next session is not sent yet.
+- $\colorbox{E69138}{ORANGE}$**:** It means that the user started this session but left it incomplete for 24 hours. We are sending incomplete session email for this situation.
+- $\colorbox{FF0000}{RED}$**:** It means that the participant is invalided since the session is not completed on time. Gift cards are also sent with the email that inform the participation about their invalidation.
+- $\colorbox{90EE90}{GREEN}$**:** It means that the next session email is sent to the participant including the calendar invite and the begin-end dates for that particular session.
+- $\colorbox{BFBFBF}{GREY}$**:** It means that the grace period is given to the participants (3 days in the current implementation) for sessions after 14. Sending emails regarding the status of the participant too.
+- $\colorbox{FF00FF}{PURPLE}$**:** It means that we already gave the grace period to the participant but 1 day remains for that grace period to end too. Sending emails regarding the status of the participant too.
+
+### Common Session Flow Scenarios
+
+#### 1. Successfully completed session on time:
+
+```mermaid
+graph TD;
+    A["Start"] --> B["WHITE: Next session date calculated"];
+    B --> C["GREEN: Next session email sent"];
+    C --> D["LIGHT BLUE: Session completed & data saved"];
+    D --> E["DARK BLUE: Completion emails sent"];
+    
+    style A fill:#fff,stroke:#333;
+    style B fill:#fff,stroke:#333;
+    style C fill:#90EE90,stroke:#333;
+    style D fill:#ADD8E6,stroke:#333;
+    style E fill:#034AEA,color:#fff,stroke:#333;
+```
+
+#### 2. Succesfully Completed but Remainder Email is sent too:
+
+```mermaid
+graph TD;
+    A["Start"] --> B["WHITE: Next session date calculated"];
+    B --> C["GREEN: Next session email sent"];
+    C --> D["YELLOW: Remainder email sent"];
+    D --> E["LIGHT BLUE: Session completed & data saved"];
+    E --> F["DARK BLUE: Completion emails sent"];
+    
+    style A fill:#fff,stroke:#333;
+    style B fill:#fff,stroke:#333;
+    style C fill:#90EE90,stroke:#333;
+    style D fill:#FFFF00,stroke:#333;
+    style E fill:#ADD8E6,stroke:#333;
+    style F fill:#034AEA,color:#fff,stroke:#333;
+```
+
+#### 3. Session is Not Completed Successfully and Remainder Email is Sent:
+
+```mermaid
+graph TD;
+    A["Start"] --> B["WHITE: Next session date calculated"];
+    B --> C["GREEN: Next session email sent"];
+    C --> D["YELLOW: Remainder email sent"];
+    D --> E["RED: Session invalidated & gift cards sent"];
+    
+    style A fill:#fff,stroke:#333;
+    style B fill:#fff,stroke:#333;
+    style C fill:#90EE90,stroke:#333;
+    style D fill:#FFFF00,stroke:#333;
+    style E fill:#FF0000,color:#fff,stroke:#333;
+```
+
+#### 4. Session is Succesfully Completed but the user left session incomplete partially:
+
+```mermaid
+graph TD;
+    A["Start"] --> B["WHITE: Next session date calculated"];
+    B --> C["GREEN: Next session email sent"];
+    C --> D["ORANGE: Incomplete session detected"];
+    D --> E["LIGHT BLUE: Session completed & data saved"];
+    E --> F["DARK BLUE: Completion emails sent"];
+    
+    style A fill:#fff,stroke:#333;
+    style B fill:#fff,stroke:#333;
+    style C fill:#90EE90,stroke:#333;
+    style D fill:#E69138,stroke:#333;
+    style E fill:#ADD8E6,stroke:#333;
+    style F fill:#034AEA,color:#fff,stroke:#333;
+```
+
+#### 5. Session is Not Completed Successfully and Incomplete Session Email is Sent:
+
+```mermaid
+graph TD;
+    A["Start"] --> B["WHITE: Next session date calculated"];
+    B --> C["GREEN: Next session email sent"];
+    C --> D["ORANGE: Incomplete session detected"];
+    D --> E["RED: Session invalidated & gift cards sent"];
+    
+    style A fill:#fff,stroke:#333;
+    style B fill:#fff,stroke:#333;
+    style C fill:#90EE90,stroke:#333;
+    style D fill:#E69138,stroke:#333;
+    style E fill:#FF0000,color:#fff,stroke:#333;
+```
+
+#### 6. After Session 15: Session is completed but after grace period reminder
+
+```mermaid
+graph TD;
+    A["Start"] --> B["WHITE: Next session date calculated"];
+    B --> C["GREEN: Next session email sent"];
+    C --> D["YELLOW: Remainder email sent"];
+    D --> E["GREY: Grace period given"];
+    E --> F["PURPLE: Grace period reminder"];
+    F --> G["LIGHT BLUE: Session completed & data saved"];
+    G --> H["DARK BLUE: Completion emails sent"];
+    
+    style A fill:#fff,stroke:#333;
+    style B fill:#fff,stroke:#333;
+    style C fill:#90EE90,stroke:#333;
+    style D fill:#FFFF00,stroke:#333;
+    style E fill:#BFBFBF,stroke:#333;
+    style F fill:#FF00FF,stroke:#333;
+    style G fill:#ADD8E6,stroke:#333;
+    style H fill:#034AEA,color:#fff,stroke:#333;
+```
+
+#### 7. After Session 15: Session is not completed but after grace period reminder
+
+```mermaid
+graph TD;
+    A["Start"] --> B["WHITE: Next session date calculated"];
+    B --> C["GREEN: Next session email sent"];
+    C --> D["YELLOW: Remainder email sent"];
+    D --> E["GREY: Grace period given"];
+    E --> F["PURPLE: Grace period reminder"];
+    F --> G["RED: Session invalidated & gift cards sent"];
+    
+    style A fill:#fff,stroke:#333;
+    style B fill:#fff,stroke:#333;
+    style C fill:#90EE90,stroke:#333;
+    style D fill:#FFFF00,stroke:#333;
+    style E fill:#BFBFBF,stroke:#333;
+    style F fill:#FF00FF,stroke:#333;
+    style G fill:#FF0000,color:#fff,stroke:#333;
+```
+
 ## Time Based Triggers
 
 Initialization creates triggers that:
