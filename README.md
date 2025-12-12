@@ -132,15 +132,15 @@ pID{userId}_gable.json
 
 GABLE uses color codes to track participant session states. Each color represents a specific stage in the session lifecycle:
 
-- $\colorbox{ADD8E6}{LIGHT BLUE}$: It means the user finished the session, the data is saved to azure database but the session completion emails are not sent.
-- $\colorbox{034AEA}{DARK BLUE}$**:** It means that the user finished the session, the data is saved to azure database and the session completion emails are sent to the participants.
-- $\colorbox{FFFF00}{YELLOW}$**:** It means that the user did not start the session but 1 days remained for the session due. The remainder emails are sent to the users.
-- $\colorbox{FFFFFF}{WHITE}$**:** It means that the next session date is calculated for the participant. However, the email that informs the participants about the next session is not sent yet.
-- $\colorbox{E69138}{ORANGE}$**:** It means that the user started this session but left it incomplete for 24 hours. We are sending incomplete session email for this situation.
-- $\colorbox{FF0000}{RED}$**:** It means that the participant is invalided since the session is not completed on time. Gift cards are also sent with the email that inform the participation about their invalidation.
-- $\colorbox{90EE90}{GREEN}$**:** It means that the next session email is sent to the participant including the calendar invite and the begin-end dates for that particular session.
-- $\colorbox{BFBFBF}{GREY}$**:** It means that the grace period is given to the participants (3 days in the current implementation) for sessions after 14. Sending emails regarding the status of the participant too.
-- $\colorbox{FF00FF}{PURPLE}$**:** It means that we already gave the grace period to the participant but 1 day remains for that grace period to end too. Sending emails regarding the status of the participant too.
+- <span style="background-color: #ADD8E6; color: black; padding: 2px 8px; border-radius: 3px;">**LIGHT BLUE**</span>: It means the user finished the session, the data is saved to azure database but the session completion emails are not sent.
+- <span style="background-color: #034AEA; color: white; padding: 2px 8px; border-radius: 3px;">**DARK BLUE**</span>: It means that the user finished the session, the data is saved to azure database and the session completion emails are sent to the participants.
+- <span style="background-color: #FFFF00; color: black; padding: 2px 8px; border-radius: 3px;">**YELLOW**</span>: It means that the user did not start the session but 1 days remained for the session due. The remainder emails are sent to the users.
+- <span style="background-color: #FFFFFF; color: black; border: 1px solid #ccc; padding: 2px 8px; border-radius: 3px;">**WHITE**</span>: It means that the next session date is calculated for the participant. However, the email that informs the participants about the next session is not sent yet.
+- <span style="background-color: #E69138; color: black; padding: 2px 8px; border-radius: 3px;">**ORANGE**</span>: It means that the user started this session but left it incomplete for 24 hours. We are sending incomplete session email for this situation.
+- <span style="background-color: #FF0000; color: white; padding: 2px 8px; border-radius: 3px;">**RED**</span>: It means that the participant is invalided since the session is not completed on time. Gift cards are also sent with the email that inform the participation about their invalidation.
+- <span style="background-color: #90EE90; color: black; padding: 2px 8px; border-radius: 3px;">**GREEN**</span>: It means that the next session email is sent to the participant including the calendar invite and the begin-end dates for that particular session.
+- <span style="background-color: #BFBFBF; color: black; padding: 2px 8px; border-radius: 3px;">**GREY**</span>: It means that the grace period is given to the participants (3 days in the current implementation) for sessions after 14. Sending emails regarding the status of the participant too.
+- <span style="background-color: #FF00FF; color: white; padding: 2px 8px; border-radius: 3px;">**PURPLE**</span>: It means that we already gave the grace period to the participant but 1 day remains for that grace period to end too. Sending emails regarding the status of the participant too.
 
 ### Common Session Flow Scenarios
 
