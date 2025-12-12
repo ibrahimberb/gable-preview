@@ -130,9 +130,6 @@ pID{userId}_gable.json
 
 ## Session Status Colors
 
-<details>
-<summary>Color Code Reference</summary>
-
 GABLE uses color codes to track participant session states. Each color represents a specific stage in the session lifecycle:
 
 - $${\color{lightblue}LIGHT \space BLUE}$$: Session completed and data saved to cloud database, but completion emails not yet sent.
@@ -145,10 +142,7 @@ GABLE uses color codes to track participant session states. Each color represent
 - $${\color{grey}GREY}$$: Grace period granted (3 days in current implementation) for sessions after session 14.
 - $${\color{purple}PURPLE}$$: Grace period previously granted with 1 day remaining before grace period expires.
 
-</details>
-
-<details>
-<summary>Common Session Flow Scenarios</summary>
+### Common Session Flow Scenarios
 
 #### 1. Successfully completed session on time:
 
@@ -275,8 +269,6 @@ graph TD;
     style F fill:#FF00FF,stroke:#333;
     style G fill:#FF0000,color:#fff,stroke:#333;
 ```
-
-</details>
 
 ## Time Based Triggers
 
