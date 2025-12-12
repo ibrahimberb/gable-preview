@@ -144,130 +144,127 @@ GABLE uses color codes to track participant session states. Each color represent
 
 ### Common Session Flow Scenarios
 
+**Color Legend:**
+- WHITE: Next session date calculated
+- GREEN: Next session email sent
+- YELLOW: Reminder email sent
+- ORANGE: Incomplete session detected
+- LIGHT BLUE: Session completed & data saved
+- DARK BLUE: Completion emails sent
+- GREY: Grace period given
+- PURPLE: Grace period reminder
+- RED: Session invalidated & gift cards sent
+
 #### 1. Successfully completed session on time:
 
 ```mermaid
-graph TD;
-    A["Start"] --> B["WHITE: Next session date calculated"];
-    B --> C["GREEN: Next session email sent"];
-    C --> D["LIGHT BLUE: Session completed & data saved"];
-    D --> E["DARK BLUE: Completion emails sent"];
+graph LR;
+    A[WHITE] --> B[GREEN];
+    B --> C[LIGHT BLUE];
+    C --> D[DARK BLUE];
     
     style A fill:#fff,stroke:#333;
-    style B fill:#fff,stroke:#333;
-    style C fill:#90EE90,stroke:#333;
+    style B fill:#90EE90,stroke:#333;
+    style C fill:#ADD8E6,stroke:#333;
+    style D fill:#034AEA,color:#fff,stroke:#333;
+```
+
+#### 2. Successfully completed but reminder email sent:
+
+```mermaid
+graph LR;
+    A[WHITE] --> B[GREEN];
+    B --> C[YELLOW];
+    C --> D[LIGHT BLUE];
+    D --> E[DARK BLUE];
+    
+    style A fill:#fff,stroke:#333;
+    style B fill:#90EE90,stroke:#333;
+    style C fill:#FFFF00,stroke:#333;
     style D fill:#ADD8E6,stroke:#333;
     style E fill:#034AEA,color:#fff,stroke:#333;
 ```
 
-#### 2. Succesfully Completed but Remainder Email is sent too:
+#### 3. Session not completed with reminder email:
 
 ```mermaid
-graph TD;
-    A["Start"] --> B["WHITE: Next session date calculated"];
-    B --> C["GREEN: Next session email sent"];
-    C --> D["YELLOW: Remainder email sent"];
-    D --> E["LIGHT BLUE: Session completed & data saved"];
-    E --> F["DARK BLUE: Completion emails sent"];
+graph LR;
+    A[WHITE] --> B[GREEN];
+    B --> C[YELLOW];
+    C --> D[RED];
     
     style A fill:#fff,stroke:#333;
-    style B fill:#fff,stroke:#333;
-    style C fill:#90EE90,stroke:#333;
-    style D fill:#FFFF00,stroke:#333;
-    style E fill:#ADD8E6,stroke:#333;
-    style F fill:#034AEA,color:#fff,stroke:#333;
+    style B fill:#90EE90,stroke:#333;
+    style C fill:#FFFF00,stroke:#333;
+    style D fill:#FF0000,color:#fff,stroke:#333;
 ```
 
-#### 3. Session is Not Completed Successfully and Remainder Email is Sent:
+#### 4. Successfully completed after incomplete session:
 
 ```mermaid
-graph TD;
-    A["Start"] --> B["WHITE: Next session date calculated"];
-    B --> C["GREEN: Next session email sent"];
-    C --> D["YELLOW: Remainder email sent"];
-    D --> E["RED: Session invalidated & gift cards sent"];
+graph LR;
+    A[WHITE] --> B[GREEN];
+    B --> C[ORANGE];
+    C --> D[LIGHT BLUE];
+    D --> E[DARK BLUE];
     
     style A fill:#fff,stroke:#333;
-    style B fill:#fff,stroke:#333;
-    style C fill:#90EE90,stroke:#333;
-    style D fill:#FFFF00,stroke:#333;
-    style E fill:#FF0000,color:#fff,stroke:#333;
+    style B fill:#90EE90,stroke:#333;
+    style C fill:#E69138,stroke:#333;
+    style D fill:#ADD8E6,stroke:#333;
+    style E fill:#034AEA,color:#fff,stroke:#333;
 ```
 
-#### 4. Session is Succesfully Completed but the user left session incomplete partially:
+#### 5. Session not completed after incomplete session:
 
 ```mermaid
-graph TD;
-    A["Start"] --> B["WHITE: Next session date calculated"];
-    B --> C["GREEN: Next session email sent"];
-    C --> D["ORANGE: Incomplete session detected"];
-    D --> E["LIGHT BLUE: Session completed & data saved"];
-    E --> F["DARK BLUE: Completion emails sent"];
+graph LR;
+    A[WHITE] --> B[GREEN];
+    B --> C[ORANGE];
+    C --> D[RED];
     
     style A fill:#fff,stroke:#333;
-    style B fill:#fff,stroke:#333;
-    style C fill:#90EE90,stroke:#333;
-    style D fill:#E69138,stroke:#333;
-    style E fill:#ADD8E6,stroke:#333;
-    style F fill:#034AEA,color:#fff,stroke:#333;
+    style B fill:#90EE90,stroke:#333;
+    style C fill:#E69138,stroke:#333;
+    style D fill:#FF0000,color:#fff,stroke:#333;
 ```
 
-#### 5. Session is Not Completed Successfully and Incomplete Session Email is Sent:
+#### 6. After session 15: Completed after grace period reminder
 
 ```mermaid
-graph TD;
-    A["Start"] --> B["WHITE: Next session date calculated"];
-    B --> C["GREEN: Next session email sent"];
-    C --> D["ORANGE: Incomplete session detected"];
-    D --> E["RED: Session invalidated & gift cards sent"];
+graph LR;
+    A[WHITE] --> B[GREEN];
+    B --> C[YELLOW];
+    C --> D[GREY];
+    D --> E[PURPLE];
+    E --> F[LIGHT BLUE];
+    F --> G[DARK BLUE];
     
     style A fill:#fff,stroke:#333;
-    style B fill:#fff,stroke:#333;
-    style C fill:#90EE90,stroke:#333;
-    style D fill:#E69138,stroke:#333;
-    style E fill:#FF0000,color:#fff,stroke:#333;
+    style B fill:#90EE90,stroke:#333;
+    style C fill:#FFFF00,stroke:#333;
+    style D fill:#BFBFBF,stroke:#333;
+    style E fill:#FF00FF,stroke:#333;
+    style F fill:#ADD8E6,stroke:#333;
+    style G fill:#034AEA,color:#fff,stroke:#333;
 ```
 
-#### 6. After Session 15: Session is completed but after grace period reminder
+#### 7. After session 15: Not completed after grace period reminder
 
 ```mermaid
-graph TD;
-    A["Start"] --> B["WHITE: Next session date calculated"];
-    B --> C["GREEN: Next session email sent"];
-    C --> D["YELLOW: Remainder email sent"];
-    D --> E["GREY: Grace period given"];
-    E --> F["PURPLE: Grace period reminder"];
-    F --> G["LIGHT BLUE: Session completed & data saved"];
-    G --> H["DARK BLUE: Completion emails sent"];
+graph LR;
+    A[WHITE] --> B[GREEN];
+    B --> C[YELLOW];
+    C --> D[GREY];
+    D --> E[PURPLE];
+    E --> F[RED];
     
     style A fill:#fff,stroke:#333;
-    style B fill:#fff,stroke:#333;
-    style C fill:#90EE90,stroke:#333;
-    style D fill:#FFFF00,stroke:#333;
-    style E fill:#BFBFBF,stroke:#333;
-    style F fill:#FF00FF,stroke:#333;
-    style G fill:#ADD8E6,stroke:#333;
-    style H fill:#034AEA,color:#fff,stroke:#333;
-```
-
-#### 7. After Session 15: Session is not completed but after grace period reminder
-
-```mermaid
-graph TD;
-    A["Start"] --> B["WHITE: Next session date calculated"];
-    B --> C["GREEN: Next session email sent"];
-    C --> D["YELLOW: Remainder email sent"];
-    D --> E["GREY: Grace period given"];
-    E --> F["PURPLE: Grace period reminder"];
-    F --> G["RED: Session invalidated & gift cards sent"];
-    
-    style A fill:#fff,stroke:#333;
-    style B fill:#fff,stroke:#333;
-    style C fill:#90EE90,stroke:#333;
-    style D fill:#FFFF00,stroke:#333;
-    style E fill:#BFBFBF,stroke:#333;
-    style F fill:#FF00FF,stroke:#333;
-    style G fill:#FF0000,color:#fff,stroke:#333;
+    style B fill:#90EE90,stroke:#333;
+    style C fill:#FFFF00,stroke:#333;
+    style D fill:#BFBFBF,stroke:#333;
+    style E fill:#FF00FF,stroke:#333;
+    style F fill:#FF0000,color:#fff,stroke:#333;
 ```
 
 ## Time Based Triggers
