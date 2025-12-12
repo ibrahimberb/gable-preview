@@ -293,6 +293,19 @@ Edit in `config.js` and email templates:
 - Allowed windows for completion
 - Storage helper functions
 
+## Citation
+
+If you use GABLE in published work, please cite the following manuscript:
+
+> Berber, I., Kas, I., Sepuri, T., Macnamara, B. N., Çavuşoğlu, M. C., Wilson-Delfosse, A. L., Krupinski, E. A., Smith, P. J., & Ray, S. (under review). GABLE: Lightweight infrastructure for longitudinal experiments using Google Apps Script. *Behavior Research Methods*.
+
 ## License
 
-Add your license text here.
+This software is licensed under the GNU General Public License v3.0 (GPL-3.0).
+Commercial use is strictly prohibited without prior written permission 
+from the authors.
+
+This license includes an additional non-commercial restriction that supersedes 
+the sections of GPL-3.0 permitting commercial use.
+
+For full license terms, see the LICENSE file.
