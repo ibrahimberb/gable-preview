@@ -130,19 +130,25 @@ pID{userId}_gable.json
 
 ## Session Status Colors
 
+<details>
+<summary>Color Code Reference</summary>
+
 GABLE uses color codes to track participant session states. Each color represents a specific stage in the session lifecycle:
 
-- $${\color{lightblue}LIGHT \space BLUE}$$: It means the user finished the session, the data is saved to azure database but the session completion emails are not sent.
-- $${\color{blue}DARK \space BLUE}$$: It means that the user finished the session, the data is saved to azure database and the session completion emails are sent to the participants.
-- $${\color{yellow}YELLOW}$$: It means that the user did not start the session but 1 days remained for the session due. The remainder emails are sent to the users.
-- $${\color{black}WHITE}$$: It means that the next session date is calculated for the participant. However, the email that informs the participants about the next session is not sent yet.
-- $${\color{orange}ORANGE}$$: It means that the user started this session but left it incomplete for 24 hours. We are sending incomplete session email for this situation.
-- $${\color{red}RED}$$: It means that the participant is invalided since the session is not completed on time. Gift cards are also sent with the email that inform the participation about their invalidation.
-- $${\color{lightgreen}LIGHT \space GREEN}$$: It means that the next session email is sent to the participant including the calendar invite and the begin-end dates for that particular session.
-- $${\color{grey}GREY}$$: It means that the grace period is given to the participants (3 days in the current implementation) for sessions after 14. Sending emails regarding the status of the participant too.
-- $${\color{purple}PURPLE}$$: It means that we already gave the grace period to the participant but 1 day remains for that grace period to end too. Sending emails regarding the status of the participant too.
+- $${\color{lightblue}LIGHT \space BLUE}$$: Session completed and data saved to cloud database, but completion emails not yet sent.
+- $${\color{blue}DARK \space BLUE}$$: Session completed, data saved to cloud database, and completion emails sent to participants.
+- $${\color{yellow}YELLOW}$$: Session not started with 1 day remaining until due date. Reminder emails sent to participants.
+- $${\color{black}WHITE}$$: Next session date calculated but session notification email not yet sent to participant.
+- $${\color{orange}ORANGE}$$: Session started but left incomplete for 24 hours. Incomplete session email sent to participant.
+- $${\color{red}RED}$$: Participant invalidated due to session not completed on time. Invalidation email and gift cards sent.
+- $${\color{green}GREEN}$$: Next session email sent to participant, including calendar invite and session begin/end dates.
+- $${\color{grey}GREY}$$: Grace period granted (3 days in current implementation) for sessions after session 14.
+- $${\color{purple}PURPLE}$$: Grace period previously granted with 1 day remaining before grace period expires.
 
-### Common Session Flow Scenarios
+</details>
+
+<details>
+<summary>Common Session Flow Scenarios</summary>
 
 #### 1. Successfully completed session on time:
 
@@ -269,6 +275,8 @@ graph TD;
     style F fill:#FF00FF,stroke:#333;
     style G fill:#FF0000,color:#fff,stroke:#333;
 ```
+
+</details>
 
 ## Time Based Triggers
 
