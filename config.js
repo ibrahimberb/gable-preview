@@ -1,8 +1,16 @@
+// Total number of sessions in the study.
 const NUM_SESSIONS = 10;
+
+// Number of experimental groups.
 const NUM_GROUPS = 7;
+
+// Required delay between sessions.
 const DAYS_INTERVAL = 2;
+
+// Human-readable version of the interval text shown to participants.
 const DAYS_INTERVAL_TEXT = "1-3 days";
 
+// Mapping of group IDs to their descriptive labels.
 const GROUPS_MAPPING = {
   "G00": "Baseline - Baseline",
   "G01": "Baseline - Variant 1",
@@ -13,6 +21,7 @@ const GROUPS_MAPPING = {
   "G22": "Variant 2 - Variant 2"
 };
 
+// Maps numeric indexes (0 to NUM_GROUPS-1) to group IDs.
 const groupIndexMapping = {
   0: "G00",
   1: "G01",
@@ -21,8 +30,9 @@ const groupIndexMapping = {
   4: "G12",
   5: "G21",
   6: "G22"
-}
+};
 
+// Reverse lookup that maps group IDs back to numeric indexes.
 const indexGroupMapping = {
   "G00": 0,
   "G01": 1,
@@ -31,8 +41,9 @@ const indexGroupMapping = {
   "G12": 4,
   "G21": 5,
   "G22": 6
-}
+};
 
+// Sanity checks to ensure all mappings remain consistent.
 assert(NUM_GROUPS === Object.keys(GROUPS_MAPPING).length, "You forgot to modify `GROUPS_MAPPING`");
 assert(NUM_GROUPS === Object.keys(groupIndexMapping).length, "You forgot to modify `groupIndexMapping`");
 assert(NUM_GROUPS === Object.keys(indexGroupMapping).length, "You forgot to modify `indexGroupMapping`");
