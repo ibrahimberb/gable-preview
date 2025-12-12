@@ -135,7 +135,7 @@ GABLE uses color codes to track participant session states. Each color represent
 - $${\color{lightblue}LIGHT \space BLUE}$$: It means the user finished the session, the data is saved to azure database but the session completion emails are not sent.
 - $${\color{blue}DARK \space BLUE}$$: It means that the user finished the session, the data is saved to azure database and the session completion emails are sent to the participants.
 - $${\color{yellow}YELLOW}$$: It means that the user did not start the session but 1 days remained for the session due. The remainder emails are sent to the users.
-- $${\color{white}\colorbox{gray}{WHITE}}$$: It means that the next session date is calculated for the participant. However, the email that informs the participants about the next session is not sent yet.
+- $${\color{black}WHITE}$$: It means that the next session date is calculated for the participant. However, the email that informs the participants about the next session is not sent yet.
 - $${\color{orange}ORANGE}$$: It means that the user started this session but left it incomplete for 24 hours. We are sending incomplete session email for this situation.
 - $${\color{red}RED}$$: It means that the participant is invalided since the session is not completed on time. Gift cards are also sent with the email that inform the participation about their invalidation.
 - $${\color{lightgreen}LIGHT \space GREEN}$$: It means that the next session email is sent to the participant including the calendar invite and the begin-end dates for that particular session.
