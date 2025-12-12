@@ -4,13 +4,13 @@ const DAYS_INTERVAL = 2;
 const DAYS_INTERVAL_TEXT = "1-3 days";
 
 const GROUPS_MAPPING = {
-  "G00": "No AI - No AI",
-  "G01": "No AI - Passive AI",
-  "G02": "No AI - Active AI",
-  "G11": "Passive AI - Passive AI",
-  "G12": "Passive AI - Active AI",
-  "G21": "Active AI - Passive AI",
-  "G22": "Active AI - Active AI"
+  "G00": "Baseline - Baseline",
+  "G01": "Baseline - Variant 1",
+  "G02": "Baseline - Variant 2",
+  "G11": "Variant 1 - Variant 1",
+  "G12": "Variant 1 - Variant 2",
+  "G21": "Variant 2 - Variant 1",
+  "G22": "Variant 2 - Variant 2"
 };
 
 const groupIndexMapping = {
@@ -74,11 +74,8 @@ var STUDIES = {
     })),
     numberOfDaysToInvalidateIncompleteSession: 1,
     numberOfHoursToInvalidateIncompleteSession: 2,
-    // statusBlobs: false,
-    statusBlobs: true,
     collecting: true,
     // IDs require a seperate sheet
-    idSheet: true,
     sasToken: "?sv=xxxx",  // Where your data is stored. E.g., Azure SAS token
     storageAccountName: "xxxx",  // Azure Storage Account Name
     storageContainer: "xxxx", // Azure Storage Container Name

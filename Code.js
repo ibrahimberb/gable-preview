@@ -618,19 +618,19 @@ function sendSessionEmails(studyName) {
       //let currSchedTime = ss.getRange(row, columnNumber(session, ignoredCols)).getValue()
       //var due_date_session = calculate_next_invite_time(new SpreadsheetTile(ss, row, null), daysRem, currSchedTime, getCurrentDate(), null)
 
-      log.info("session ----------------------------- ");
-      log.info("Session: " +session);
-      log.info("Days Remaining " + daysRem);
-      log.info("should send first email is " + shouldSendFirstSessionEmails(ss, row, column, diffDate(new Date(), dateObject(ss, row, column)),session ) + " for session " +session);
-      log.info("should send remainder email is " + shouldSendReminderEmails(ss, row, column, daysRem,session, totalSessions) + " for session " +session);
-      log.info("should send completion email is " + shouldSendCompletionSessionEmails(studyName, ss, row, column,days, fileData, fileNameAzure, session) + " for session " +session );
-      log.info("should send next email is " + shouldSendNextSessionEmails(ss, row, column,daysRem) + " for session " +session );
-      log.info("should invalidate " + shouldInvalidateSession(studyName, fileData, fileNameAzure, ss, row, column, session, days) + " for session " +session );
-      log.info("should Send Partially Completed Session Emails " + shouldSendPartiallyCompletedSessionEmails(studyName, fileData, ss, row, column, daysRem,session,totalSessions)+ + " for session " +session);
-      log.info("should  Give Grace Period" + shouldGiveGracePeriod(studyName, fileData, fileNameAzure, ss, row, column, session,days) + " for session " +session);
-      log.info("should  Give Grace Period Reminder " + shouldSendReminderEmailsInGracePeriod(ss, row, column, daysRem,session,userTotalSessions)+ " for session " +session );
-      log.info("has date passed " + hasDatePassed(studyName, fileData, fileNameAzure, ss, row, column, session)  + " for session " +session)
-      log.info("session ----------------------------- ");
+      // log.info("session ----------------------------- ");
+      // log.info("Session: " +session);
+      // log.info("Days Remaining " + daysRem);
+      // log.info("should send first email is " + shouldSendFirstSessionEmails(ss, row, column, diffDate(new Date(), dateObject(ss, row, column)),session ) + " for session " +session);
+      // log.info("should send remainder email is " + shouldSendReminderEmails(ss, row, column, daysRem,session, totalSessions) + " for session " +session);
+      // log.info("should send completion email is " + shouldSendCompletionSessionEmails(studyName, ss, row, column,days, fileData, fileNameAzure, session) + " for session " +session );
+      // log.info("should send next email is " + shouldSendNextSessionEmails(ss, row, column,daysRem) + " for session " +session );
+      // log.info("should invalidate " + shouldInvalidateSession(studyName, fileData, fileNameAzure, ss, row, column, session, days) + " for session " +session );
+      // log.info("should Send Partially Completed Session Emails " + shouldSendPartiallyCompletedSessionEmails(studyName, fileData, ss, row, column, daysRem,session,totalSessions)+ + " for session " +session);
+      // log.info("should  Give Grace Period" + shouldGiveGracePeriod(studyName, fileData, fileNameAzure, ss, row, column, session,days) + " for session " +session);
+      // log.info("should  Give Grace Period Reminder " + shouldSendReminderEmailsInGracePeriod(ss, row, column, daysRem,session,userTotalSessions)+ " for session " +session );
+      // log.info("has date passed " + hasDatePassed(studyName, fileData, fileNameAzure, ss, row, column, session)  + " for session " +session)
+      // log.info("session ----------------------------- ");
 
       // should we sent first session email or not
       // if we have first session within 24 hours, send first session an pre-study emails

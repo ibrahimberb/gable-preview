@@ -104,8 +104,6 @@ function getUsers(studyName="GABLE_01") {
     //log.debug(`Azure.gs | fileId: ${fileId}`);
     //log.debug(`Azure.gs | fileSetting: ${sessionNumber}`);
     //log.debug(`Azure.gs | trialNumber: ${trialNumber}`);
-    //log.debug(`Azure.gs | STUDIES[study].statusBlobs: ${STUDIES[studyName].statusBlobs}`)
-
     fileId = fileId.trim();
     if (fileId != "positions" & !usersObject[fileId]) { // do not include position.json files inside of the users
       usersObject[fileId] = {};
