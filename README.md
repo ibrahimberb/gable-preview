@@ -15,7 +15,7 @@ GABLE is a Google Apps Script framework for managing participants in longitudina
 
 ## Quick Start
 
-### 1. Google Apps Script Setup
+### Google Apps Script Setup
 
 1. Create a new Google Sheet
 2. Go to Extensions → Apps Script
@@ -104,7 +104,7 @@ adminCalendarId: "------TODO-----------",
 - `website`
 URL of your experimental task.
 
-- `preexperiment`: URL of a pre experiment survey (for example Qualtrics).
+- `preexperiment`: URL of a pre experiment survey.
 
 - `email`: Contact email for participants. You may provide multiple addresses separated by commas.
 
@@ -266,10 +266,10 @@ GABLE uses color codes to track participant session states. Each color represent
 - $${\color{blue}DARK \space BLUE}$$: Session completed, data saved to cloud database, and completion emails sent to participants.
 - $${\color{yellow}YELLOW}$$: Session not started with 1 day remaining until due date. Reminder emails sent to participants.
 - $${\color{black}WHITE}$$: Next session date calculated but session notification email not yet sent to participant.
-- $${\color{orange}ORANGE}$$: Session started but left incomplete for 24 hours. Incomplete session email sent to participant.
+- $${\color{orange}ORANGE}$$: Session started but left incomplete for e.g., 24 hours (configurable). Incomplete session email sent to participant.
 - $${\color{red}RED}$$: Participant invalidated due to session not completed on time. Invalidation email and gift cards sent.
 - $${\color{green}GREEN}$$: Next session email sent to participant, including calendar invite and session begin/end dates.
-- $${\color{grey}GREY}$$: Grace period granted (3 days in current implementation) for sessions after session 14.
+- $${\color{grey}GREY}$$: Grace period granted (3 days in current implementation, configurable) for sessions after session e.g., 14 (but configurable).
 - $${\color{purple}PURPLE}$$: Grace period previously granted with 1 day remaining before grace period expires.
 
 ### Common Session Flow Scenarios
@@ -359,7 +359,7 @@ graph LR;
     style D fill:#FF0000,color:#fff,stroke:#333;
 ```
 
-#### 6. After session 15: Completed after grace period reminder
+#### 6. After the configured session number (e.g., session 15), the study is marked complete once the grace-period reminder has been sent.
 
 ```mermaid
 graph LR;
@@ -379,7 +379,7 @@ graph LR;
     style G fill:#034AEA,color:#fff,stroke:#333;
 ```
 
-#### 7. After session 15: Not completed after grace period reminder
+#### 7. After the configured session number (e.g., 15), the study is considered not completed if the participant fails to finish after the grace-period reminder.
 
 ```mermaid
 graph LR;
