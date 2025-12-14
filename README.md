@@ -466,11 +466,6 @@ If you use GABLE in published work, please cite the following manuscript:
 
 ## License
 
-This software is licensed under the GNU General Public License v3.0 (GPL-3.0).
-Commercial use is strictly prohibited without prior written permission 
-from the authors.
-
-This license includes an additional non-commercial restriction that supersedes 
-the sections of GPL-3.0 permitting commercial use.
-
-For full license terms, see the LICENSE file.
+This project is released under a noncommercial license. Commercial use is
+prohibited without prior written permission from the author.
+Please see the LICENSE file for more details.
