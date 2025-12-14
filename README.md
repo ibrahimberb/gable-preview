@@ -190,15 +190,50 @@ storageAccountName: "xxxx",
 storageContainer: "xxxx",
 ```
 
-The storage fields above were originally described as Azure related. You can keep them as is or adapt them for any cloud service provider as long as your storage helper functions know how to use them. 
-
-If you decide to use a different cloud provider, remember to adapt your own storage helper functions similar to those that are in `Azure.gs`. 
-
-GABLE only requires the ability to read and write JSON.
-
 - `collecting`: Set to true to enable data collection from your storage backend.
 
 - `sasToken`, `storageAccountName`, `storageContainer`: Azure storage related fields that establish connection for your storage backend. Fill these in with your own credentials (or adapt to your own storage solution).
+
+GABLE only requires the ability to read and write JSON.
+
+GABLE currently ships with an `Azure.gs` file that implements all communication with Azure Blob Storage using SAS tokens. If you want to use a different storage provider (for example AWS S3, GCP Storage, Firebase), you only need to replace the implementation of the storage access functions in `Azure.gs` while keeping their function signatures the same.
+
+
+Specifically, you should update:
+
+- Single-file read helper
+
+  - `readAzureFile(study, filename)`
+
+  - `constructAzureBlobUrl(...)` and any URL/token handling (for example `cleanToken`)
+
+  - These should call your provider’s “download object” API and return the parsed JSON.
+
+- Initial registration (first write)
+
+  - `registerUserToDatabase(userID, groupID, sessionStartTime, study)`
+
+  - `Replace the Azure PUT request with the equivalent “create object” call in your provider.`
+
+  - `Updating existing participant files`
+
+  - `terminateUser(study, file)`
+
+  - `updateStartDateUser(study, file, newStartTime)`
+
+  - `getSessionCompletionTimeRefetch(study, file, sessionNumber)`
+
+  - `getLastTrialCompletedTimeRefetch(study, file, sessionNumber)`
+
+  - These should fetch the JSON file from your storage, modify it, and upload it back using your provider’s API.
+
+- Listing participant files
+
+  - `blobDictionary(study)`
+
+  - This implements Azure’s “list blobs” operation and parses the XML response. Replace it with your provider’s “list objects” call and return a dictionary mapping filenames to timestamps.
+
+All other functions that operate on JSON objects (getSessionCompletionTime, getLastTrialCompletedTime, getSessionStartTime, etc.) can remain unchanged as long as your task writes the same JSON schema and file naming pattern (for example pID{userId}_gable.json).
 
 
 ## Integration with Your Task Webpage
