@@ -458,11 +458,11 @@ Edit in `config.js` and email templates:
 - Allowed windows for completion
 - Storage helper functions
 
-## Citation
+<!-- ## Citation
 
 If you use GABLE in published work, please cite the following manuscript:
 
-> Berber, I., Kas, I., Sepuri, T., Macnamara, B. N., Çavuşoğlu, M. C., Wilson-Delfosse, A. L., Krupinski, E. A., Smith, P. J., & Ray, S. (under review). GABLE: Lightweight infrastructure for longitudinal experiments using Google Apps Script. *Behavior Research Methods*.
+> Berber, I., Kas, I., Sepuri, T., Macnamara, B. N., Çavuşoğlu, M. C., Wilson-Delfosse, A. L., Krupinski, E. A., Smith, P. J., & Ray, S. (under review). GABLE: Lightweight infrastructure for longitudinal experiments using Google Apps Script. *Behavior Research Methods*. -->
 
 ## License
 
