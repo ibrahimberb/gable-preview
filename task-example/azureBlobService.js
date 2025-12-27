@@ -56,6 +56,15 @@ function getBlobName(userId) {
 }
 
 /**
+ * Get the blob name for a user's experiment data file
+ * @param {string} userId - The user ID (e.g., "P21234b567c")
+ * @returns {string} - The blob name (e.g., "P21234b567c_data.json")
+ */
+function getExperimentDataBlobName(userId) {
+  return `${userId}_data.json`;
+}
+
+/**
  * Read user info from Azure Blob Storage or local filesystem
  * @param {string} userId - The user ID
  * @param {string} experiment - The experiment name (for local fallback)
@@ -233,11 +242,123 @@ async function streamToString(readableStream) {
   });
 }
 
+/**
+ * Read experiment data from Azure Blob Storage or local filesystem
+ * @param {string} userId - The user ID
+ * @param {string} experiment - The experiment name (for local fallback)
+ * @returns {Promise<Object|null>} - The experiment data object or null if not found
+ */
+async function readExperimentData(userId, experiment = null) {
+  if (isAzureEnabled()) {
+    try {
+      const blobName = getExperimentDataBlobName(userId);
+      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+      
+      // Check if blob exists
+      const exists = await blockBlobClient.exists();
+      if (!exists) {
+        console.log(`Experiment data blob ${blobName} does not exist`);
+        return null;
+      }
+      
+      // Download blob content
+      const downloadResponse = await blockBlobClient.download(0);
+      const downloadedContent = await streamToString(downloadResponse.readableStreamBody);
+      
+      return JSON.parse(downloadedContent);
+    } catch (error) {
+      console.error(`Error reading experiment data from Azure for ${userId}:`, error.message);
+      return null;
+    }
+  } else {
+    // Fallback to local filesystem
+    if (!experiment) {
+      console.error('Experiment parameter required for local filesystem fallback');
+      return null;
+    }
+    
+    try {
+      const USERS_DIR = path.join(__dirname, 'users');
+      const normalizedExperiment = experiment.toLowerCase();
+      const infoDir = path.join(USERS_DIR, normalizedExperiment, 'info');
+      const filePath = path.join(infoDir, `${userId}_${normalizedExperiment}_data.json`);
+      
+      if (fs.existsSync(filePath)) {
+        const data = fs.readFileSync(filePath, 'utf8');
+        return JSON.parse(data);
+      }
+      return null;
+    } catch (error) {
+      console.error(`Error reading experiment data locally for ${userId}:`, error.message);
+      return null;
+    }
+  }
+}
+
+/**
+ * Write experiment data to Azure Blob Storage or local filesystem
+ * @param {string} userId - The user ID
+ * @param {Object} data - The experiment data to write
+ * @param {string} experiment - The experiment name (for local fallback)
+ * @returns {Promise<boolean>} - True if successful, false otherwise
+ */
+async function writeExperimentData(userId, data, experiment = null) {
+  if (isAzureEnabled()) {
+    try {
+      const blobName = getExperimentDataBlobName(userId);
+      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+      
+      // Convert data to JSON string
+      const content = JSON.stringify(data, null, 2);
+      
+      // Upload to Azure Blob Storage
+      await blockBlobClient.upload(content, content.length, {
+        blobHTTPHeaders: {
+          blobContentType: 'application/json'
+        }
+      });
+      
+      console.log(`✅ Successfully uploaded ${blobName} to Azure Blob Storage`);
+      return true;
+    } catch (error) {
+      console.error(`Error writing experiment data to Azure for ${userId}:`, error.message);
+      return false;
+    }
+  } else {
+    // Fallback to local filesystem
+    if (!experiment) {
+      console.error('Experiment parameter required for local filesystem fallback');
+      return false;
+    }
+    
+    try {
+      const USERS_DIR = path.join(__dirname, 'users');
+      const normalizedExperiment = experiment.toLowerCase();
+      const infoDir = path.join(USERS_DIR, normalizedExperiment, 'info');
+      const filePath = path.join(infoDir, `${userId}_${normalizedExperiment}_data.json`);
+      
+      // Ensure directory exists
+      if (!fs.existsSync(infoDir)) {
+        fs.mkdirSync(infoDir, { recursive: true });
+      }
+      
+      fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
+      return true;
+    } catch (error) {
+      console.error(`Error writing experiment data locally for ${userId}:`, error.message);
+      return false;
+    }
+  }
+}
+
 module.exports = {
   isAzureEnabled,
   readUserInfo,
   writeUserInfo,
   listUserInfoBlobs,
   deleteUserInfo,
-  getBlobName
+  getBlobName,
+  readExperimentData,
+  writeExperimentData,
+  getExperimentDataBlobName
 };

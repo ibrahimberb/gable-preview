@@ -126,6 +126,49 @@ async function writeUserInfo(userId, experiment, data) {
   }
 }
 
+// Helper function to read experiment data file
+async function readExperimentData(userId, experiment) {
+  try {
+    return await azureBlobService.readExperimentData(userId, experiment);
+  } catch (error) {
+    console.error(
+      `Error reading experiment data for ${userId} in ${experiment}:`,
+      error
+    );
+    return null;
+  }
+}
+
+// Helper function to write experiment data file
+async function writeExperimentData(userId, experiment, data) {
+  try {
+    return await azureBlobService.writeExperimentData(userId, data, experiment);
+  } catch (error) {
+    console.error(
+      `Error writing experiment data for ${userId} in ${experiment}:`,
+      error
+    );
+    return false;
+  }
+}
+
+// Initialize experiment data file if it doesn't exist
+async function initializeExperimentData(userId, experiment) {
+  const existingData = await readExperimentData(userId, experiment);
+  if (!existingData) {
+    const initialData = {
+      userId: userId,
+      experiment: experiment,
+      createdAt: new Date().toISOString(),
+      answers: {}
+    };
+    await writeExperimentData(userId, experiment, initialData);
+    log.info(`Initialized experiment data file for ${userId}`);
+    return initialData;
+  }
+  return existingData;
+}
+
 // Helper function to read experiment config
 function readExperimentConfig(experiment) {
   try {
@@ -301,6 +344,10 @@ app.post("/api/login", async (req, res) => {
     log.debug(`Saving updated user info for ${username}`);
     await writeUserInfo(username, experiment, userInfo);
     
+    // Initialize experiment data file if it doesn't exist
+    log.debug(`Checking/initializing experiment data file for ${username}`);
+    await initializeExperimentData(username, experiment);
+    
     log.info(`Login successful for ${username} in ${experiment}`);
     res.json({
       success: true,
@@ -450,6 +497,85 @@ app.post("/api/trial-complete", async (req, res) => {
   } catch (error) {
     log.error(`Error in trial-complete: ${error.message}`);
     log.debug(`Error stack: ${error.stack}`);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Save trial answer
+app.post("/api/save-answer", async (req, res) => {
+  const { sessionNumber, trialNumber, answer, reactionTime } = req.body;
+  log.info(`=== SAVE ANSWER API Called === session: ${sessionNumber}, trial: ${trialNumber}, answer: ${answer}`);
+  
+  if (!req.session.user || !req.session.experiment) {
+    log.warning(`Save answer failed - not authenticated`);
+    return res.status(401).json({ error: "Not authenticated" });
+  }
+  
+  try {
+    // Read or initialize experiment data
+    let experimentData = await readExperimentData(req.session.user, req.session.experiment);
+    if (!experimentData) {
+      experimentData = await initializeExperimentData(req.session.user, req.session.experiment);
+    }
+    
+    // Initialize nested structure if needed
+    if (!experimentData.answers) {
+      experimentData.answers = {};
+    }
+    if (!experimentData.answers[sessionNumber]) {
+      experimentData.answers[sessionNumber] = {};
+    }
+    
+    // Save the answer with timestamp and reaction time
+    experimentData.answers[sessionNumber][trialNumber] = {
+      answer: answer,
+      timestamp: new Date().toISOString(),
+      reactionTime: reactionTime || null
+    };
+    
+    // Update lastModified
+    experimentData.lastModified = new Date().toISOString();
+    
+    // Write to storage
+    const success = await writeExperimentData(req.session.user, req.session.experiment, experimentData);
+    
+    if (success) {
+      log.info(`Successfully saved answer for session ${sessionNumber}, trial ${trialNumber}: ${answer}`);
+      res.json({ 
+        success: true,
+        message: `Answer saved for trial ${trialNumber}`
+      });
+    } else {
+      log.error(`Failed to save answer data`);
+      res.status(500).json({ error: "Failed to save answer" });
+    }
+  } catch (error) {
+    log.error(`Error in save-answer: ${error.message}`);
+    log.debug(`Error stack: ${error.stack}`);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Get experiment data for current user
+app.get("/api/experiment-data", async (req, res) => {
+  if (!req.session.user || !req.session.experiment) {
+    return res.status(401).json({ error: "Not authenticated" });
+  }
+  
+  try {
+    const experimentData = await readExperimentData(req.session.user, req.session.experiment);
+    if (experimentData) {
+      res.json(experimentData);
+    } else {
+      // Return empty structure if no data yet
+      res.json({
+        userId: req.session.user,
+        experiment: req.session.experiment,
+        answers: {}
+      });
+    }
+  } catch (error) {
+    log.error(`Error getting experiment data: ${error.message}`);
     res.status(500).json({ error: "Internal server error" });
   }
 });

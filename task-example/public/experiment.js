@@ -52,6 +52,21 @@ async function refreshUserInfo() {
   }
 }
 
+// Refresh experiment data display
+async function refreshExperimentData() {
+  try {
+    const response = await fetch('/api/experiment-data');
+    const data = await response.json();
+    
+    const experimentDataDisplay = document.getElementById('user-experiment-data-display');
+    if (experimentDataDisplay) {
+      experimentDataDisplay.textContent = JSON.stringify(data, null, 2);
+    }
+  } catch (error) {
+    console.error('Error refreshing experiment data:', error);
+  }
+}
+
 // Load experiment configuration
 async function loadExperimentConfig() {
   const experiment = getExperimentFromURL();
@@ -125,8 +140,9 @@ async function checkAuth() {
       // Store userInfo globally for trial restoration
       window.currentUserInfo = data.userInfo;
 
-      // Load experiment config
+      // Load experiment config and data
       loadExperimentConfig();
+      refreshExperimentData();
     } else {
       // Not authenticated, redirect to login
       window.location.href = `login.html?experiment=${experiment}`;
@@ -402,8 +418,52 @@ async function runJsPsychTrial(trialNumber) {
     }
   };
 
-  // Run the experiment
-  await jsPsych.run([trial]);
+  // Run the experiment and capture results
+  const results = await jsPsych.run([trial]);
+  
+  // Show loading overlay while saving answer
+  showLoadingOverlay();
+  
+  // Extract answer and reaction time from results
+  const trialData = jsPsych.data.get().last(1).values()[0];
+  const userAnswer = trialData.response !== null ? trial.choices[trialData.response] : null;
+  const reactionTime = trialData.rt;
+  
+  console.log(`[Trial Result] User selected: ${userAnswer}, RT: ${reactionTime}ms`);
+  
+  // Save answer to server
+  if (userAnswer) {
+    try {
+      const userInfo = window.currentUserInfo;
+      const sessionNumber = userInfo ? userInfo.sessionNumber : 1;
+      
+      const response = await fetch('/api/save-answer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          sessionNumber, 
+          trialNumber, 
+          answer: userAnswer,
+          reactionTime: reactionTime
+        })
+      });
+      
+      const data = await response.json();
+      if (data.success) {
+        console.log(`[Trial Result] Answer saved successfully`);
+        // Refresh experiment data display
+        await refreshExperimentData();
+      }
+    } catch (error) {
+      console.error('Error saving answer:', error);
+    } finally {
+      // Hide loading overlay
+      hideLoadingOverlay();
+    }
+  } else {
+    // No answer (timeout) - still hide the overlay
+    hideLoadingOverlay();
+  }
 }
 
 // Handle button clicks - advance state
