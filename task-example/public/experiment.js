@@ -785,7 +785,7 @@ function setupSessionButtons() {
           const sessionNumber = userInfo ? userInfo.sessionNumber : null;
           const messageEl = document.getElementById("session-completed-message");
           if (messageEl) {
-            messageEl.textContent = `Thanks for completing the Session ${sessionNumber}! You may now close the browser or navigate away.`;
+            messageEl.textContent = `Thanks for completing Session ${sessionNumber}! You may now close the browser or navigate away.`;
             messageEl.classList.remove("hidden");
             console.log(`[checkSessionCompleted] Showing session completed message`);
           }
