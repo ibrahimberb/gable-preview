@@ -67,7 +67,8 @@ async function loadExperimentConfig() {
     if (response.ok && config) {
       configDisplay.textContent = JSON.stringify(config, null, 2);
 
-      // Initialize trials with config
+      // Store config globally and initialize trials
+      experimentConfig = config;
       if (window.initializeTrials) {
         window.initializeTrials(config);
       }
@@ -217,6 +218,7 @@ if (logoutBtn) {
 // Trial Management Functions
 const trialStates = {};
 let totalTrials = 10; // Default value, will be updated from config
+let experimentConfig = null; // Store config globally for accessing sessionTimeLimits
 
 // Check if trial is accessible (previous trial must be completed)
 function isTrialAccessible(trialNumber) {
@@ -268,6 +270,34 @@ function updateAllTrialsUI() {
   }
 }
 
+// Helper function to determine which phase the current session belongs to
+function getCurrentPhase(sessionNumber, sessionCategories) {
+  if (!sessionCategories) return null;
+  
+  for (const [phase, sessions] of Object.entries(sessionCategories)) {
+    if (sessions.includes(sessionNumber)) {
+      return phase;
+    }
+  }
+  return null;
+}
+
+// Helper function to extract group for current phase from user's group string
+function getUserGroupForPhase(userGroup, phase) {
+  if (!userGroup || !phase) return 'G?';
+  
+  // User group format: "G01" means G0 for P1, G1 for P2
+  // Extract the digit based on phase number
+  const phaseIndex = parseInt(phase.replace('P', '')) - 1; // P1 -> 0, P2 -> 1
+  
+  if (userGroup.startsWith('G') && userGroup.length >= 2 + phaseIndex) {
+    const digit = userGroup[1 + phaseIndex]; // G01: index 1 for P1, index 2 for P2
+    return `G${digit}`;
+  }
+  
+  return 'G?';
+}
+
 // Run jsPsych trial
 async function runJsPsychTrial(trialNumber) {
   // Hide main content and show jsPsych container
@@ -278,6 +308,26 @@ async function runJsPsychTrial(trialNumber) {
   const container = document.getElementById('jspsych-container');
   container.classList.remove('hidden');
   container.innerHTML = ''; // Clear any previous content
+
+  // Get current session number and time limit from config
+  const userInfo = window.currentUserInfo;
+  const sessionNumber = userInfo ? userInfo.sessionNumber : 1;
+  const timeLimit = experimentConfig?.sessionTimeLimits?.[sessionNumber] || 5; // Default to 5 seconds
+  const trialDuration = timeLimit * 1000; // Convert to milliseconds
+  
+  // Determine current phase and user's group for this phase
+  const currentPhase = getCurrentPhase(sessionNumber, experimentConfig?.sessionCategories);
+  const userGroup = userInfo?.group || 'G??';
+  const groupForPhase = getUserGroupForPhase(userGroup, currentPhase);
+  
+  // Get the button to highlight from sessionAnswers based on group
+  const sessionAnswers = experimentConfig?.sessionAnswers?.[sessionNumber];
+  const trialAnswers = sessionAnswers?.[trialNumber];
+  const highlightButton = trialAnswers?.groups?.[groupForPhase] || null;
+  const displayText = trialAnswers?.label?.toUpperCase() || 'UNKNOWN';
+  const displayColor = trialAnswers?.value?.toLowerCase() || 'red';
+  
+  console.log(`[runJsPsychTrial] Session ${sessionNumber}, Phase: ${currentPhase}, User Group: ${userGroup}, Group for Phase: ${groupForPhase}, Time limit: ${timeLimit} seconds, Highlight: ${highlightButton}, Text: ${displayText}, Color: ${displayColor}`);
 
   // Initialize jsPsych with display element
   const jsPsych = initJsPsych({
@@ -294,16 +344,62 @@ async function runJsPsychTrial(trialNumber) {
     }
   });
 
-  // Create a simple trial
+  // Create a simple trial with countdown timer
   const trial = {
     type: jsPsychHtmlButtonResponse,
-    stimulus: `<div style="font-size: 32px; margin: 40px;">
-                 <p style="font-size: 48px; margin-bottom: 20px;">Trial ${trialNumber}</p>
-                 <p>Click the button that matches the color of the word:</p>
-                 <p style="font-size: 64px; color: blue; font-weight: bold; margin: 40px;">RED</p>
-               </div>`,
-    choices: ['Red', 'Blue', 'Green'],
-    prompt: '<p>Make your choice</p>'
+    stimulus: `
+      <style>
+        @keyframes countdown {
+          from { width: 100%; }
+          to { width: 0%; }
+        }
+        .progress-container {
+          width: 100%;
+          height: 8px;
+          background: linear-gradient(to right, #e0e0e0 0%, #f0f0f0 100%);
+          border-radius: 10px;
+          overflow: hidden;
+          margin-bottom: 30px;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .progress-bar {
+          height: 100%;
+          background: linear-gradient(to right, #667eea 0%, #06b6d4 50%, #a78bfa 100%);
+          border-radius: 10px;
+          animation: countdown ${timeLimit}s linear forwards;
+          box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+        }
+        .highlighted-button {
+          border: 3px solid rgba(255, 200, 0, 0.7) !important;
+          box-shadow: 0 0 15px rgba(255, 200, 0, 0.5) !important;
+        }
+      </style>
+      <div style="font-size: 32px; margin: 40px;">
+        <p style="font-size: 48px; margin-bottom: 20px;">Trial ${trialNumber}</p>
+        <p>Click the button that matches the color of the word:</p>
+        <p style="font-size: 64px; color: ${displayColor}; font-weight: bold; margin: 40px;">${displayText}</p>
+        <p style="font-size: 18px; margin-top: 40px; margin-bottom: 20px;">Make your choice</p>
+      </div>`,
+    choices: ['Red', 'Pink', 'Green', 'Gray', 'Yellow', 'Black', 'Purple', 'Orange', 'Brown'],
+    prompt: `<div style="margin-top: 30px;">
+      <p style="font-size: 14px; color: #999; margin-bottom: 10px; font-family: monospace;">⏱️ Timer: ${timeLimit}s | Session ${sessionNumber} | Phase: ${currentPhase} | Group: <strong style="color: #667eea;">${groupForPhase}</strong></p>
+      <div class="progress-container">
+        <div class="progress-bar"></div>
+      </div>
+    </div>`,
+    button_html: '<button class="jspsych-btn" style="margin: 5px; padding: 10px 20px; min-width: 100px;">%choice%</button>',
+    trial_duration: trialDuration,
+    on_load: function() {
+      // Apply highlight to the specific button if highlightButton is not null
+      if (highlightButton && highlightButton !== 'null') {
+        const buttons = document.querySelectorAll('.jspsych-btn');
+        buttons.forEach(button => {
+          if (button.textContent.trim() === highlightButton) {
+            button.classList.add('highlighted-button');
+          }
+        });
+      }
+    }
   };
 
   // Run the experiment
