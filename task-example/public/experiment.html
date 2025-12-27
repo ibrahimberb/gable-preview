@@ -13,6 +13,22 @@
     <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.3"></script>
     <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.3"></script>
     <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        #team {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
         .hero-gradient {
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         }
@@ -25,7 +41,7 @@
         }
     </style>
 </head>
-<body class="font-sans antialiased text-gray-800 ml-[400px]">
+<body class="font-sans antialiased text-gray-800 ml-[400px] m-0 p-0">
     <!-- Navigation -->
     <nav class="bg-white shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -144,7 +160,7 @@
                     <p class="mt-4 text-sm max-w-xs">Investigating the mechanisms of human cognitive skill acquisition, adaptation, and performance when working alongside AI.</p>
                 </div>
                 
-                <div class="grid grid-cols-2 gap-8 sm:grid-cols-3">
+                <!-- <div class="grid grid-cols-2 gap-8 sm:grid-cols-3">
                     <div>
                         <h3 class="text-sm font-semibold uppercase tracking-wider">Research</h3>
                         <ul class="mt-4 space-y-2">
@@ -174,7 +190,7 @@
                             <li><a href="#" class="text-sm hover:text-white">Cookies</a></li>
                         </ul>
                     </div>
-                </div>
+                </div> -->
             </div>
             
             <div class="mt-12 border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center">
