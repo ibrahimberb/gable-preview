@@ -52,7 +52,7 @@ function isAzureEnabled() {
  * @returns {string} - The blob name (e.g., "P21234b567c_gable_info.json")
  */
 function getBlobName(userId) {
-  return `pID${userId}_gable.json`;
+  return `${userId}_gable.json`;
 }
 
 /**
