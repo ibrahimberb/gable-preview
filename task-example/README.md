@@ -50,3 +50,7 @@ This application implements the STROBE (Stroop Task for Repeated Observation of 
 ## Default Password
 
 All users: `1234`
+
+## Security Note
+
+This is a research demonstration platform. The simplified authentication (password: "1234") is intentional for ease of participant access for testing purposes. For production use, implement proper authentication.
