@@ -391,7 +391,7 @@ async function runJsPsychTrial(trialNumber) {
         }
       </style>
       <div style="font-size: 32px; margin: 40px;">
-        <p style="font-size: 48px; margin-bottom: 20px;">Trial ${trialNumber}</p>
+        <p style="font-size: 48px; margin-bottom: 20px;">Session ${sessionNumber} / Trial ${trialNumber}</p>
         <p>Click the button that matches the color of the word:</p>
         <p style="font-size: 64px; color: ${displayColor}; font-weight: bold; margin: 40px;">${displayText}</p>
         <p style="font-size: 18px; margin-top: 40px; margin-bottom: 20px;">Make your choice</p>
