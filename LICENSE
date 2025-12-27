@@ -1,30 +1,49 @@
-GABLE Noncommercial License
+GABLE Noncommercial ShareAlike License (GNSL)
+Version 1.0 (2025)
 
 Copyright (c) 2025 Ibrahim Berber. All rights reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to use,
-copy, modify, and merge the Software for noncommercial research, academic,
-or personal purposes, subject to the following conditions:
+This is a source-available license intended to support open scientific collaboration while preventing others from profiting financially from the Software. Because it restricts commercial use, it is not an “Open Source” license under common Open Source definitions.
 
-1. Commercial use of the Software, in whole or in part, is prohibited without
-   prior written permission from the copyright holder. "Commercial use"
-   includes, but is not limited to:
-   (a) selling or licensing the Software or derivative works,
-   (b) using the Software or derivative works to provide paid services,
-   (c) integrating the Software or derivative works into a product,
-       service, or platform that is sold, licensed, or used in exchange
-       for any form of compensation.
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to use, copy, modify, and distribute the Software for noncommercial research, academic, or personal purposes, subject to the following terms and conditions:
 
-2. Redistributions of the Software or derivative works must:
-   (a) retain this license text,
-   (b) clearly state any changes made, and
-   (c) include an attribution to the original author.
+1. Definitions
+   (a) “Source Code” means the preferred form of the Software for making modifications, including build, deployment, and configuration scripts where applicable.
+   (b) “Modified Version” means the Software with any changes, additions, removals, or derivative works based on the Software.
+   (c) “Commercial Use” includes, without limitation:
+       (i) selling, licensing, or monetizing the Software or any Modified Version;
+       (ii) using the Software or any Modified Version to provide paid services, consulting, hosting, training, support, or access;
+       (iii) integrating the Software or any Modified Version into any product, service, platform, or workflow that is sold, licensed, or provided in exchange for compensation or commercial advantage;
+       (iv) using the Software or any Modified Version primarily for the benefit of a for-profit entity’s commercial activities, whether or not you charge separately for the Software itself.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
+2. Noncommercial restriction
+   Commercial Use of the Software, in whole or in part, is prohibited without prior written permission from the copyright holder.
+   If you wish to use the Software commercially, contact the copyright holder to request a separate commercial license.
+
+3. Share-alike and public release requirement for modifications
+   If you create a Modified Version (including any change to the Software), you must make the corresponding Source Code of that Modified Version publicly available at no charge under this same license (GNSL), including your changes.
+   (a) Timing: You must publish the Source Code no later than the earlier of:
+       (i) the first public release or distribution of the Modified Version; or
+       (ii) the first deployment or use of the Modified Version to provide access or functionality to anyone outside your immediate research group; or
+       (iii) 30 days after you first create the Modified Version.
+   (b) Where: Publication must be to a publicly accessible repository or archive (for example, a public Git repository) that allows recipients to obtain the complete corresponding Source Code.
+   (c) Completeness: The published Source Code must include all files you changed or added, plus any scripts and instructions reasonably necessary to build, install, and run the Modified Version.
+
+4. Redistribution conditions (original or modified)
+   Redistributions of the Software or any Modified Version must:
+   (a) include this full license text;
+   (b) retain all copyright, license, and attribution notices;
+   (c) clearly state that changes were made, and provide the date and a brief description of the changes; and
+   (d) for any Modified Version, comply with Section 3 (public release of Source Code) and license the Modified Version as a whole under this same license, at no charge.
+
+5. No additional restrictions
+   You may not impose any further restrictions on the recipients’ exercise of the rights granted under this license. Any additional terms (including click-through terms) that conflict with this license are void.
+
+6. Disclaimer of warranty
+   THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT.
+
+7. Limitation of liability
+   IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+8. Termination
+   Any violation of this license automatically terminates your rights under this license. Upon termination, you must cease all use, copying, modification, and distribution of the Software and any Modified Version. Recipients who received copies from you under this license will not have their licenses terminated provided they remain in full compliance.
