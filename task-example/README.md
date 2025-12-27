@@ -1,0 +1,52 @@
+# Task Application - STROBE Experiment
+
+A web-based experimental platform for running behavioral experiments with session and trial management.
+
+## Overview
+
+This application implements the STROBE (Stroop Task for Repeated Observation of Behavioral Effects) experiment with:
+- Multi-session, multi-trial structure
+- Dynamic experiment configuration via YAML
+- Azure Blob Storage integration for data persistence
+- Real-time progress tracking and data visualization
+- jsPsych integration for stimulus presentation
+
+## Features
+
+- **Session Management**: Track multiple sessions with trial progression
+- **Configurable Experiments**: Define trials, timing, and conditions in YAML
+- **Data Collection**: Automatic storage of answers, reaction times, and timestamps
+- **User Groups**: Support for experimental conditions (G0, G1, G2)
+- **Phase-based Design**: Organize sessions into experimental phases
+- **Azure Integration**: Cloud storage with local fallback support
+
+## Quick Start
+
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+2. Configure Azure storage (optional) in `config/azure.yaml`
+
+3. Start the server:
+   ```bash
+   node server.js
+   ```
+
+4. Access at `http://localhost:3000`
+
+## Configuration
+
+- `config/strobe.yaml` - Experiment parameters
+- `config/azure.yaml` - Azure Blob Storage settings
+- `config/app.yaml` - Application settings
+
+## Data Storage
+
+- **User metadata**: `{userId}_gable.json`
+- **Experiment data**: `{userId}_data.json`
+
+## Default Password
+
+All users: `1234`
