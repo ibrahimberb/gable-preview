@@ -2,8 +2,8 @@
 
 ## Overview
 This application uses Azure Blob Storage for storing experiment data files:
-- **User metadata**: `{userId}_gable.json` - Session/trial tracking managed by Apps Script
-- **Experiment data**: `{userId}_data.json` - Trial answers and experiment-specific data
+- **User metadata**: `pID{userId}_gable.json` - Session/trial tracking managed by Apps Script
+- **Experiment data**: `pID{userId}_data.json` - Trial answers and experiment-specific data
 
 ## Setup Instructions
 
@@ -125,7 +125,7 @@ app.get('/api/list-users', async (req, res) => {
 ### Error: "Blob does not exist"
 - The data file hasn't been created yet in Azure
 - Files are auto-created on first login
-- Check file naming: `{userId}_gable.json` and `{userId}_data.json`
+- Check file naming: `pID{userId}_gable.json` and `pID{userId}_data.json`
 
 ### Error: "Authentication failed"
 - Verify your SAS token is valid and not expired

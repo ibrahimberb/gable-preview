@@ -44,8 +44,8 @@ This application implements the STROBE (Stroop Task for Repeated Observation of 
 
 ## Data Storage
 
-- **User metadata**: `{userId}_gable.json`
-- **Experiment data**: `{userId}_data.json`
+- **User metadata**: `pID{userId}_gable.json`
+- **Experiment data**: `pID{userId}_data.json`
 
 ## Default Password
 
