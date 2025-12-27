@@ -27,7 +27,7 @@ This application implements the STROBE (Stroop Task for Repeated Observation of 
    npm install
    ```
 
-2. Configure Azure storage (optional) in `config/azure.yaml`
+2. Configure Azure storage (to test with cloud storage) in `config/azure.yaml` (see the [Azure Setup Guide](AZURE_SETUP.md) for details on this or use local storage for development).
 
 3. Start the server:
    ```bash
@@ -49,7 +49,7 @@ This application implements the STROBE (Stroop Task for Repeated Observation of 
 
 ## Default Password
 
-All users: `1234`
+All participants: `1234`
 
 ## Security Note
 

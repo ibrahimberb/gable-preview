@@ -1,7 +1,9 @@
 # Azure Blob Storage Integration Setup Guide
 
 ## Overview
-Your application now supports Azure Blob Storage for storing user info files. Files are stored as `{userId}_gable_info.json` in your Azure container.
+This application uses Azure Blob Storage for storing experiment data files:
+- **User metadata**: `{userId}_gable.json` - Session/trial tracking managed by Apps Script
+- **Experiment data**: `{userId}_data.json` - Trial answers and experiment-specific data
 
 ## Setup Instructions
 
@@ -13,13 +15,13 @@ Edit the file [config/azure.yaml](config/azure.yaml) and fill in your Azure Stor
 # Storage account name
 storageAccountName: "your-storage-account-name"
 
-# Container name where user info files are stored
+# Container name where data files are stored
 containerName: "your-container-name"
 
 # SAS Token (without the leading '?')
 sasToken: "your-sas-token-here"
 
-# Enable/disable Azure Blob Storage
+# Enable/disable Azure Blob Storage (set to false to use local filesystem for development)
 enabled: true
 ```
 
@@ -43,22 +45,20 @@ enabled: true
 
 ### 3. File Naming Convention
 
-When a user with ID `P21234b567c` logs in, the system will:
-- Read from: `P21234b567c_gable_info.json`
-- Write to: `P21234b567c_gable_info.json`
+When a user with ID `48c3228` logs in, the system will create/access:
+- **Metadata**: `pID48c3228_gable.json` (managed by Apps Script)
+- **Experiment data**: `pID48c3228_data.json` (trial answers, reaction times)
 
-**Note:** The system automatically uses the `_gable_info.json` suffix (not `_visualsearch_info.json` or `_spatialnavigation_info.json`).
+### 4. Local Development Mode
 
-### 4. Local Fallback Mode
-
-If Azure is disabled or not configured, the system will fall back to the local filesystem:
+For local development/testing, you can disable Azure:
 ```yaml
 enabled: false
 ```
 
-This stores files in:
-- `users/visualsearch/info/{userId}_visualsearch_info.json`
-- `users/spatialnavigation/info/{userId}_spatialnavigation_info.json`
+This stores files locally in:
+- `users/strobe/info/pID{userId}_strobe_info.json`
+- `users/strobe/info/pID{userId}_strobe_data.json`
 
 ## How to Get Azure Credentials
 
@@ -123,8 +123,9 @@ app.get('/api/list-users', async (req, res) => {
 - Make sure you've filled in either `connectionString` OR both `storageAccountName` + `sasToken`
 
 ### Error: "Blob does not exist"
-- The user info file hasn't been created yet in Azure
-- Check that the file naming is correct: `{userId}_gable_info.json`
+- The data file hasn't been created yet in Azure
+- Files are auto-created on first login
+- Check file naming: `{userId}_gable.json` and `{userId}_data.json`
 
 ### Error: "Authentication failed"
 - Verify your SAS token is valid and not expired
@@ -135,26 +136,44 @@ app.get('/api/list-users', async (req, res) => {
 - Check that `enabled: true` in [config/azure.yaml](config/azure.yaml)
 - Verify there are no errors in the console when starting the server
 
-## Migration from Local to Azure
+## Data Structure
 
-If you have existing local files you want to migrate to Azure:
+### Gable Metadata (`pID{userId}_gable.json`)
+Managed by Apps Script, contains:
+- User ID and group assignment
+- Session and trial tracking
+- Login history
+- Session completion timestamps
 
-1. Keep `enabled: false` initially
-2. Run your application normally
-3. Set `enabled: true`
-4. Restart the server
-5. Upload existing files manually to Azure Blob Storage with the naming pattern `{userId}_gable_info.json`
+### Experiment Data (`pID{userId}_data.json`)
+Managed by this application, contains:
+```json
+{
+  "userId": "P48c3228",
+  "experiment": "strobe",
+  "createdAt": "2025-12-26T...",
+  "answers": {
+    "1": {
+      "1": {
+        "answer": "Red",
+        "timestamp": "2025-12-26T...",
+        "reactionTime": 1234
+      }
+    }
+  }
+}
+```
 
 ## Security Best Practices
 
 1. **Never commit credentials to Git**
-   - Add `config/azure.yaml` to `.gitignore`
-   - Use environment variables for production
-
-2. **Use SAS tokens with limited permissions**
-   - Only grant necessary permissions (Read, Write, List)
-   - Set reasonable expiry dates
-
+   - Add `config/azure.yaml` to `.gitignore`metadata file
+- `writeUserInfo(userId, data, experiment)` - Write user metadata file
+- `readExperimentData(userId, experiment)` - Read experiment data file
+- `writeExperimentData(userId, data, experiment)` - Write experiment data file
+- `listUserInfoBlobs()` - List all user IDs (Azure only)
+- `deleteUserInfo(userId)` - Delete user info file (Azure only)
+- `isAzureEnabled()` - Check if Azure is enabled
 3. **Rotate credentials regularly**
    - Regenerate SAS tokens periodically
    - Update the configuration file
