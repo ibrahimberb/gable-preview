@@ -158,7 +158,21 @@ studyData: Array.from({ length: NUM_SESSIONS }, (_, i) => ({
 
 ```
 
-- Creating necessary data with the default gap of `DAYS_INTERVAL`
+- This creates the session schedule with a default interval of `DAYS_INTERVAL` days between all sessions.
+
+- **Customization**: While the default implementation uses uniform intervals, you can modify this array to implement varying schedules. For example, you might want shorter intervals for minor check-in sessions and longer intervals for major assessment sessions, or gradually increasing intervals as the study progresses. To customize intervals, replace the `Array.from()` with a manual array definition where you can set each session's `daysBeforeNext` individually:
+
+Here is an example of explicitly defining individual session intervals:
+
+```js
+studyData: [
+  { sessionName: "1", daysBeforeNext: 2 },
+  { sessionName: "2", daysBeforeNext: 2 },
+  { sessionName: "3", daysBeforeNext: 7 },  // longer interval
+  { sessionName: "4", daysBeforeNext: 2 },
+  // ... continue for all sessions
+],
+```
 
 
 ##### Invalidation Rules
@@ -296,28 +310,15 @@ pID{userId}_gable.json
 
 GABLE uses color codes to track participant session states. Each color represents a specific stage in the session lifecycle:
 
+- $${\color{black}WHITE}$$: Next session date calculated but session notification email not yet sent to participant.
+- $${\color{green}GREEN}$$: Next session email sent to participant, including calendar invite and session begin/end dates.
 - $${\color{lightblue}LIGHT \space BLUE}$$: Session completed and data saved to cloud database, but completion emails not yet sent.
 - $${\color{blue}DARK \space BLUE}$$: Session completed, data saved to cloud database, and completion emails sent to participants.
 - $${\color{yellow}YELLOW}$$: Session not started with 1 day remaining until due date. Reminder emails sent to participants.
-- $${\color{black}WHITE}$$: Next session date calculated but session notification email not yet sent to participant.
 - $${\color{orange}ORANGE}$$: Session started but left incomplete for e.g., 24 hours (configurable). Incomplete session email sent to participant.
-- $${\color{red}RED}$$: Participant invalidated due to session not completed on time. Invalidation email and gift cards sent.
-- $${\color{green}GREEN}$$: Next session email sent to participant, including calendar invite and session begin/end dates.
 - $${\color{grey}GREY}$$: Grace period granted (3 days in current implementation, configurable) for sessions after session e.g., 14 (but configurable).
 - $${\color{purple}PURPLE}$$: Grace period previously granted with 1 day remaining before grace period expires.
-
-### Common Session Flow Scenarios
-
-**Color Legend:**
-- WHITE: Next session date calculated
-- GREEN: Next session email sent
-- YELLOW: Reminder email sent
-- ORANGE: Incomplete session detected
-- LIGHT BLUE: Session completed & data saved
-- DARK BLUE: Completion emails sent
-- GREY: Grace period given
-- PURPLE: Grace period reminder
-- RED: Session invalidated & gift cards sent
+- $${\color{red}RED}$$: Participant invalidated due to session not completed on time. Invalidation email and gift cards sent.
 
 #### 1. Successfully completed session on time:
 
