@@ -168,12 +168,7 @@ Managed by this application, contains:
 
 1. **Never commit credentials to Git**
    - Add `config/azure.yaml` to `.gitignore`metadata file
-- `writeUserInfo(userId, data, experiment)` - Write user metadata file
-- `readExperimentData(userId, experiment)` - Read experiment data file
-- `writeExperimentData(userId, data, experiment)` - Write experiment data file
-- `listUserInfoBlobs()` - List all user IDs (Azure only)
-- `deleteUserInfo(userId)` - Delete user info file (Azure only)
-- `isAzureEnabled()` - Check if Azure is enabled
+
 3. **Rotate credentials regularly**
    - Regenerate SAS tokens periodically
    - Update the configuration file
@@ -184,7 +179,7 @@ Managed by this application, contains:
 
 ## Additional Features
 
-The `azureBlobService.js` module provides these functions:
+The `azureBlobService.js` module provides several utility functions such as:
 
 - `readUserInfo(userId, experiment)` - Read user info file
 - `writeUserInfo(userId, data, experiment)` - Write user info file
