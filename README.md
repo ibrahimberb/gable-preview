@@ -113,7 +113,6 @@ URL of your experimental task.
 - `updateeEmails`: List of addresses that receive daily status updates.
 
 - `adminCalendarId`: Google Calendar ID where participant sessions are scheduled.
-Google Calendar ID where participant sessions are scheduled.
 
 ##### Group and Incentive Settings
 
@@ -213,19 +212,19 @@ Specifically, you should update:
 
   - `registerUserToDatabase(userID, groupID, sessionStartTime, study)`
 
-  - `Replace the Azure PUT request with the equivalent “create object” call in your provider.`
+    - `Replace the Azure PUT request with the equivalent “create object” call in your provider.`
 
   - `Updating existing participant files`
 
-  - `terminateUser(study, file)`
+    - `terminateUser(study, file)`
 
-  - `updateStartDateUser(study, file, newStartTime)`
+    - `updateStartDateUser(study, file, newStartTime)`
 
-  - `getSessionCompletionTimeRefetch(study, file, sessionNumber)`
+    - `getSessionCompletionTimeRefetch(study, file, sessionNumber)`
 
-  - `getLastTrialCompletedTimeRefetch(study, file, sessionNumber)`
+    - `getLastTrialCompletedTimeRefetch(study, file, sessionNumber)`
 
-  - These should fetch the JSON file from your storage, modify it, and upload it back using your provider’s API.
+    - These should fetch the JSON file from your storage, modify it, and upload it back using your provider’s API.
 
 - Listing participant files
 
