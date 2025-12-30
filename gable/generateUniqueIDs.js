@@ -1,11 +1,22 @@
 function getAllSubgroups() {
-  // Derive automatically: 6 base groups × 2 timer flags
+  // Simply return the base groups without timer flags
+  return Object.keys(GROUPS_MAPPING);
+
+  // If you would like to do more complex subgrouping, you may uncomment below:
+  // This example adds a timer flag (0 or 1) to each base group
+  // creating subgroups like G110, G111, G120, G121, etc.
+  /*
   const subgroups = [];
   Object.keys(GROUPS_MAPPING).forEach(base => {
     subgroups.push(base + "0");
     subgroups.push(base + "1");
   });
   return subgroups;
+  */
+  
+  // Note: If you enable subgrouping above, you'll also need to update:
+  // - getGroupCounts(): change substring(0, 3) to substring(0, 4)
+  // - testGetUniqueIdWithGroupLarge(): change substring(0, 3) to substring(0, 4)
 }
 
 function getGroupCounts() {
@@ -23,7 +34,7 @@ function getGroupCounts() {
     if (!id) continue;
     if (completed === "Invalid") continue;
 
-    const subgroup = id.substring(0, 4); // e.g. "P110"
+    const subgroup = id.substring(0, 3); // e.g. "G21". If use subgrouping, change to substring(0, 4)
     counts[subgroup] = (counts[subgroup] || 0) + 1;
   }
 
@@ -45,7 +56,7 @@ function getUniqueIdWithGroup(name, surname, emailId) {
 
   // Pick random subgroup
   const chosen = candidates[Math.floor(Math.random() * candidates.length)];
-  const groupPrefix = chosen.substring(0, 3); // e.g. "P11"
+  const groupPrefix = chosen; // Use the full 3-character prefix (e.g. "G21"). If you use additional subgrouping, use chosen.substring(0, 3) instead.
 
   // Generate hash
   const stringToHash = name + surname + emailId;
@@ -99,7 +110,7 @@ function testGetUniqueIdWithGroupLarge() {
   testCases.forEach(function(testCase) {
     var ID = getUniqueIdWithGroup(testCase.name, testCase.surname, testCase.emailId);
     console.log(`Name: ${testCase.name}, Surname: ${testCase.surname}, Email: ${testCase.emailId}`);
-    console.log(`Generated ID: ${ID}, Prefix: ${ID.substring(0, 4)}`); // prefix now includes timer flag
+    console.log(`Generated ID: ${ID}, Prefix: ${ID.substring(0, 3)}`); // Using substring(0, 3). If you use additional subgrouping, change to substring(0, 4)
   });
 }
 
