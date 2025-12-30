@@ -446,7 +446,38 @@ Initialization creates triggers that:
 
 ### Testing
 
-Use a few test participants and confirm session changes, email behavior, and JSON updates.
+#### Basic Testing Workflow
+
+**1. Add a Test Participant**
+
+- Fill out the Google Form to sign up a test participant
+- Verify that the participant's record appears as a new row in the Google Sheet
+
+**2. Trigger Email and Session Processing**
+
+Choose one of the following methods:
+
+- **Automatic (recommended for production)**: Wait for the scheduled trigger to run automatically
+- **Manual (recommended for testing)**:
+  - Open the Google Sheet and navigate to the **Config** tab
+  - Update the `TIME` value using ISO 8601 format (e.g., `2025-12-29T14:30:00.000Z`)
+  - Open the Apps Script editor and manually run the `sendAllStudyEmails` function in [Code.js](gable/Code.js)
+
+**3. Complete a Test Session**
+
+- Navigate to your task experiment webpage
+- Complete the experimental task as a participant would
+- Ensure your task writes the completion status to the JSON storage file
+
+**4. Verify Session Completion**
+
+- Adjust the `TIME` value in the Config tab to simulate time passing (if needed)
+- Re-run the `sendAllStudyEmails` function
+- Confirm that GABLE recognizes the session completion:
+  - The session cell in the Google Sheet changes color (green → light blue → dark blue)
+  - A completion confirmation email is sent to the participant
+
+This workflow allows you to test the full participant lifecycle, from signup through session completion, without waiting for actual days to pass between sessions.
 
 ### Customization
 
