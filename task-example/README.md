@@ -20,7 +20,24 @@ This application implements the STROBE (Stroop Task for Repeated Observation of 
 - **Phase-based Design**: Organize sessions into experimental phases
 - **Azure Integration**: Cloud storage with local fallback support
 
-## Quick Start
+## Integration with GABLE
+
+To integrate with GABLE, please ensure you follow the steps outlined in the [main REAME](../README.md).
+
+1. **Set up Google Sheet**: Create a Google Sheet following the GABLE main documentation to store participant metadata and experiment progress.
+
+2. **Configure Google Form**: Use a Google Form linked to your Sheet for participant sign-up. Form responses automatically populate a new row with participant information.
+
+3. **Verify Participant Registration**: After form submission, confirm the participant appears as a new row in your Google Sheet with their ID and assigned experimental group (G0, G1, or G2).
+
+4. **Sync with Task App**: The GABLE integration reads participant data from the cloud storage to manage participants and track session progress across experiments.
+
+<img src="screenshots/STROBE_AppsScript.png" alt="STROBE Apps Script" width="1000">
+
+
+> **Note:** For detailed testing information and guidelines, refer to the Testing section in the README.md file located in the project root directory.
+
+## Quick Start with Task Experiment
 
 1. Install dependencies:
    ```bash
